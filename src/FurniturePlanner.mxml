@@ -7,43 +7,13 @@
 
 	<fx:Script>
 		<![CDATA[
-	
-			import mx.rpc.events.FaultEvent;
-			import mx.rpc.events.ResultEvent;
-			import mx.controls.Alert;
+							
 			protected function loginpanel_clickHandler(event:MouseEvent):void
 			{
-				if (event.target.id == 'loginButton'){
-					currentState='MainState';
-				}
-				else{
+				if (event.target.id == 'RegButton' && event.type == 'click'){
 					currentState = 'RegState';
 				}
 			}
-
-			protected function authorizationService_resultHandler(event:ResultEvent):void
-			{
-				Alert.show(event.result.toString());
-			}
-
-
-			protected function regPanel_clickHandler(event:MouseEvent):void
-			{
-				if (event.target.id == 'registration'){
-					authorizationService.send();
-				}
-				else{
-					
-				}
-			}
-
-
-			protected function authorizationService_faultHandler(event:FaultEvent):void
-			{
-				Alert.show(event.fault.faultString, "Информация об ошибке");
-				
-			}
-
 		]]>
 	</fx:Script>
 
@@ -62,21 +32,6 @@
 	</s:transitions>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<s:HTTPService id = "authorizationService"
-					   url="http://localhost:3001/users/create_xml"
-					   contentType="application/xml"
-					   method="POST" 
-					   resultFormat="e4x"
-					   result="authorizationService_resultHandler(event)"
-					   fault="authorizationService_faultHandler(event)">
-			<s:request xmlns="">
-				<user>
-					<login>{regPanel.userLogin.text}</login>
-					<name>{regPanel.userName.text}</name>
-					<email>{regPanel.userEmail.text}</email>
-				</user>
-			</s:request>
-		</s:HTTPService>
 	</fx:Declarations>
 	<s:layout>
 		<s:VerticalLayout verticalAlign="middle" horizontalAlign="center"/>
@@ -96,6 +51,5 @@
 	<components:RegistrationPanel
 		id="regPanel"
 		includeIn = "RegState"
-		title="Регистрация нового пользователя" 
-		click="regPanel_clickHandler(event)"/>
+		title="Регистрация нового пользователя" />
 </s:Application>

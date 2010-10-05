@@ -3,8 +3,54 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 width = "400">
+
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]
+			public var serverAddress:String = new String("http://localhost:3000/users/create_xml");
+			
+			protected function authorizationService_resultHandler(event:ResultEvent):void
+			{
+				Alert.show(event.result.toString());
+			}
+			
+						
+			protected function authorizationService_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString, "Информация об ошибке");
+				
+			}
+
+			protected function registration_clickHandler(event:MouseEvent):void
+			{
+				authorizationService.send();
+			}
+
+		]]>
+	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:HTTPService id = "authorizationService"
+					   url = "{serverAddress}"
+					   contentType="application/xml"
+					   method="POST" 
+					   resultFormat="e4x"
+					   result="authorizationService_resultHandler(event)"
+					   fault="authorizationService_faultHandler(event)">
+			<s:request xmlns="">
+				<user>
+					<login>{userLogin.text}</login>
+					<email>{userEmail.text}</email>
+					<name>{userName.text}</name>
+					<password>{userPassword.text}</password>
+					<passwordConfirmation>{userPasswordConfirmation.text}</passwordConfirmation>
+				</user>
+			</s:request>
+		</s:HTTPService>
 	</fx:Declarations>
 	<s:layout>
 		<s:VerticalLayout horizontalAlign="center"
@@ -13,27 +59,46 @@
 	</s:layout>
 	<s:VGroup horizontalAlign="center" width="100%" height="100%">
 		<mx:Form>
-			<mx:FormItem label="Имя:">
-				<s:TextInput id="userName"/>
+			<mx:FormItem 
+				label="Логин:"
+				 required="true">
+				<s:TextInput id="userLogin"/> 
 			</mx:FormItem>
-			<mx:FormItem label="Фамилия:">
-				<s:TextInput id="userSurName"/>
-			</mx:FormItem>
-			<mx:FormItem label="Эл. почта:">
+			<mx:FormItem 
+				label="Эл. почта:"
+				required="true">
 				<s:TextInput id="userEmail"/>
 			</mx:FormItem>
-			<mx:FormItem label="Логин:">
-				<s:TextInput id="userLogin"/>
+			<mx:FormItem 
+				label="Имя:"
+				required="true">
+				<s:TextInput id="userName"/>
 			</mx:FormItem>
-			<mx:FormItem label="Пароль:">
-				<s:TextInput id="userPassword"/>
+			<mx:FormItem 
+				label="Фамилия:"
+				required="true">
+				<s:TextInput id="userSurName"/>
 			</mx:FormItem>
-			<mx:FormItem label="Повторите пароль:">
-				<s:TextInput/>
+			<mx:FormItem 
+				label="Пароль:"
+				required="true">
+				<s:TextInput 
+					id="userPassword"
+					displayAsPassword="true"/>
+			</mx:FormItem>
+			<mx:FormItem 
+				label="Повторите пароль:"
+				required="true">
+				<s:TextInput 
+					id="userPasswordConfirmation"
+					displayAsPassword="true"/>
 			</mx:FormItem>
 		</mx:Form>
 		<s:HGroup>
-			<s:Button id = "registration" label = "Создать" />
+			<s:Button 
+				id = "registration" 
+				label = "Создать" 
+				click="registration_clickHandler(event)"/>
 		</s:HGroup>
 	</s:VGroup>	
 </s:Panel>
