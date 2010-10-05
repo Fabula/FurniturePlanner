@@ -4,18 +4,29 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 width = "400">
 
+	<fx:Metadata>
+		[Event(name = "accountCreate", type = "events.AccountCreateEvent")]
+	</fx:Metadata>
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
+			import events.AccountCreateEvent;
 			
 			[Bindable]
 			public var serverAddress:String = new String("http://localhost:3000/users/create_xml");
 			
 			protected function authorizationService_resultHandler(event:ResultEvent):void
 			{
-				Alert.show(event.result.toString());
+				var result:Object = event.result;
+				
+				if (result == "error"){
+					Alert.show("Ошибка при создании учетной записи", "Ошибка");
+				}
+				else{
+					dispatchEvent(new AccountCreateEvent(XML(result)));
+				}
 			}
 			
 						
@@ -45,9 +56,9 @@
 				<user>
 					<login>{userLogin.text}</login>
 					<email>{userEmail.text}</email>
-					<name>{userName.text}</name>
+					<!--<name>{userName.text}</name>-->
 					<password>{userPassword.text}</password>
-					<passwordConfirmation>{userPasswordConfirmation.text}</passwordConfirmation>
+					<password_confirmation>{userPasswordConfirmation.text}</password_confirmation>
 				</user>
 			</s:request>
 		</s:HTTPService>

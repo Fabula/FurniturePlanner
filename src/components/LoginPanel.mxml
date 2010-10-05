@@ -9,11 +9,15 @@
 						  gap="15"
 						  paddingTop="15" paddingLeft="15" paddingRight="15" paddingBottom="15"/>
 	</s:layout>
+	<fx:Metadata>
+		[Event(name = "login", type = "events.LoginEvent")]
+	</fx:Metadata>
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
+			import events.LoginEvent;
 
 			protected function loginService_resultHandler(event:ResultEvent):void
 			{
@@ -22,20 +26,21 @@
 					Alert.show("Неправильный логин или пароль", "Ошибка авторизации");
 				}
 				else{
-					Alert.show(result.toString(), "Ответ от сервера");
+					dispatchEvent(new LoginEvent(XML(result)));
 				}
 			}
 
 
 			protected function loginButton_clickHandler(event:MouseEvent):void
 			{
-				loginService.send({login: login.text, password: password.text});
+				loginService.send(
+					{login: login.text, password: password.text});
 			}
 
 
 			protected function loginService_faultHandler(event:FaultEvent):void
 			{
-				Alert.show(event.fault.faultString, "Сообщение об ошибке");
+				Alert.show(event.fault.toString(), "Сообщение об ошибке");
 			}
 
 		]]>
@@ -57,7 +62,8 @@
 				<s:TextInput id="login"/>
 			</mx:FormItem>
 			<mx:FormItem label="Пароль:">
-				<s:TextInput id="password" displayAsPassword="true"/>
+				<s:TextInput id="password" 
+							 displayAsPassword="true"/>
 			</mx:FormItem>
 		</mx:Form>
 		<s:HGroup>

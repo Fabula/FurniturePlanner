@@ -7,6 +7,9 @@
 
 	<fx:Script>
 		<![CDATA[
+			import events.AccountCreateEvent;
+			import events.LoginEvent;
+			import mx.controls.Alert;
 							
 			protected function loginpanel_clickHandler(event:MouseEvent):void
 			{
@@ -14,6 +17,19 @@
 					currentState = 'RegState';
 				}
 			}
+
+			protected function accountCreateHandler(event:AccountCreateEvent):void
+			{
+				Alert.show("Учетная запись успешно создана " + event.user.toString(), "Уведомление");
+				currentState = 'MainState';
+			}
+
+
+			protected function loginPanel_loginHandler(event:LoginEvent):void
+			{
+				currentState = 'MainState';
+			}
+
 		]]>
 	</fx:Script>
 
@@ -42,6 +58,7 @@
 		title = "Вход в систему"  
 		includeIn="LoginState,RegState"
 		click="loginpanel_clickHandler(event)"
+		login="loginPanel_loginHandler(event)"
 		/>
 	<s:Panel 
 		title="Визуализация мебелирование помещения" 
@@ -51,5 +68,6 @@
 	<components:RegistrationPanel
 		id="regPanel"
 		includeIn = "RegState"
-		title="Регистрация нового пользователя" />
+		title="Регистрация нового пользователя" 
+		accountCreate="accountCreateHandler(event)"/>
 </s:Application>
