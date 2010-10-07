@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="100%" height="100%" 
+		 xmlns:components="components.*"
+		 skinClass="skins.customPanelSkin" >
+	<s:controlBarContent>
+		<s:HGroup id="helpBar" 
+				  width="50%"
+				  gap="-2">
+			<s:HGroup
+				gap="-2"
+				verticalAlign="middle">
+				<s:BitmapImage source="@Embed('icons/help.png')" />
+				<mx:LinkButton label="Помощь дизайнера" 
+							   textDecoration="underline"
+							   />
+			</s:HGroup>
+			<s:HGroup verticalAlign="middle" gap="0">
+				<s:BitmapImage source="@Embed('icons/cart.png')" />
+				<mx:LinkButton label="Покупка мебели" 
+							   textDecoration="underline" />	
+			</s:HGroup>
+		</s:HGroup>
+		<s:HGroup id="sessionControl" 
+				  width="50%" 
+				  horizontalAlign="right"
+				  verticalAlign="middle">
+			<s:HGroup
+				 verticalAlign="middle"
+				  gap="-2">
+				<s:BitmapImage source="@Embed('icons/status_online.png')" />
+				<mx:LinkButton 
+					label="Учетная запись" 
+					textDecoration="underline"/>
+			</s:HGroup>
+			<s:HGroup
+				verticalAlign="middle"
+				gap="-2">
+				<s:BitmapImage source="@Embed('icons/door_out.png')" />
+				<mx:LinkButton label="Выход" 
+							   id="logout" 
+							   textDecoration="underline"
+							    />
+			</s:HGroup>
+		</s:HGroup>
+	</s:controlBarContent>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:HGroup width="100%" height="100%">
+		<components:ToolWindow width="100%" height="100%" />
+		<s:VGroup horizontalAlign="right" width="200" gap="20">
+			<mx:TabNavigator width="200" height="150">
+				<s:NavigatorContent label="Гостиные" />
+				<s:NavigatorContent label="Кухни" />
+				<s:NavigatorContent label="Мягкая мебель" />
+			</mx:TabNavigator>
+			<components:userProjects title="Мои проекты"
+									 width="200"/>
+		</s:VGroup>
+	</s:HGroup>
+</s:Panel>
