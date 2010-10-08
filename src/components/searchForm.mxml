@@ -5,9 +5,6 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:layout>
-		<s:VerticalLayout horizontalAlign="center"/>
-	</s:layout>
 	<mx:Form>
 		<mx:FormItem label="Поиск:">
 			<s:TextInput />
@@ -16,4 +13,6 @@
 			<s:ComboBox />
 		</mx:FormItem>
 	</mx:Form>
+	<!--Indian code -->
+	<mx:HRule x="0" y="81" width="300"/>
 </s:Group>

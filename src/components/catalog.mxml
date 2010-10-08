@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="components.*">
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			[Embed(source = 'icons/furniture/kitchen_icon_small.png')]
+			private var kitchenIcon:Class;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<mx:Accordion >
+		<s:NavigatorContent label="Кухни">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Бытовая техника">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Гостиные">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Спальни">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Кабинеты">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Детские">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Столы, стулья">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Мягкая мебель">
+			<components:searchForm />
+		</s:NavigatorContent>
+	</mx:Accordion>
+</s:Group>
