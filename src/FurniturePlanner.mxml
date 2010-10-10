@@ -36,6 +36,8 @@
 			{
 				if (event.target.id == 'logout' && event.type == 'click'){
 					currentState = 'LoginState';
+					loginPanel.login.text = '';
+					loginPanel.password.text = '';
 				}
 			}
 
