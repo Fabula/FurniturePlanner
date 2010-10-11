@@ -14,7 +14,27 @@
 							
 			protected function loginpanel_clickHandler(event:MouseEvent):void
 			{
-				if (event.target.id == 'RegButton' && event.type == 'click'){
+				if (event.target.id == 'loginButton'){
+					switch(loginPanel.systemRoles.selectedIndex){
+						case 0:
+							currentState = 'MainState';
+							mainWindow.currentState = 'userState';
+							break;
+						case 1:
+							currentState = 'MainState';
+							mainWindow.currentState = 'designerEmployeeState';
+							break;	
+						case 2:
+							currentState = 'MainState';
+							mainWindow.currentState = 'managerState';
+							break;
+						case 3:
+							currentState = 'MainState';
+							mainWindow.currentState = 'adminState';
+							break;
+					}
+				}
+				if (event.target.id == 'RegButton'){
 					currentState = 'RegState';
 				}
 			}
@@ -73,7 +93,8 @@
 			title="Регистрация нового пользователя" 
 			accountCreate="accountCreateHandler(event)"/>
 	</s:VGroup>
-	<components:userMainWindow
+	<components:mainWindow
+		id="mainWindow"
 		includeIn="MainState"
 		click="userWindowClickHandler(event)"/>
 </s:Application>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:components="components.*"
+		 width="100%" height="100%" >
+	<fx:Script>
+		<![CDATA[
+			[Embed(source="icons/report.png")] 
+			[Bindable]
+			public var furnitureListIcon:Class; 
+			
+			[Embed(source="icons/help.png")] 
+			[Bindable]
+			public var helpButtonIcon:Class; 
+			
+			[Embed(source="icons/cart.png")] 
+			[Bindable]
+			public var buyButtonIcon:Class; 
+			
+			[Embed(source="icons/status_online.png")] 
+			[Bindable]
+			public var accountIcon:Class;
+			
+			[Embed(source="icons/door_out.png")] 
+			[Bindable]
+			public var logoutIcon:Class;
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="userState"/>
+		<s:State name="designerEmployeeState"/>
+		<s:State name="managerState"/>
+		<s:State name="adminState"/>
+	</s:states>
+	<s:controlBarContent>
+		<s:HGroup id="helpBar" 
+				  width="50%">
+			<s:HGroup
+				verticalAlign="middle">
+				<mx:LinkButton label="Помощь дизайнера" 
+							   textDecoration="underline"
+							   excludeFrom="adminState,designerEmployeeState,managerState"
+							   icon="{helpButtonIcon}"/>
+			</s:HGroup>
+			<s:HGroup verticalAlign="middle">
+				<mx:LinkButton label="Покупка мебели" 
+							   textDecoration="underline"
+							   excludeFrom="adminState,designerEmployeeState,managerState"
+							   icon="{buyButtonIcon}"/>	
+			</s:HGroup>
+		</s:HGroup>
+		<s:HGroup id="sessionControl" 
+				  width="50%" 
+				  horizontalAlign="right"
+				  verticalAlign="middle">
+			<s:HGroup
+				 verticalAlign="middle">
+				<mx:LinkButton 
+					label="Учетная запись" 
+					textDecoration="underline"
+					icon="{accountIcon}"/>
+			</s:HGroup>
+			<s:HGroup
+				verticalAlign="middle">
+				<mx:LinkButton label="Выход" 
+							   id="logout" 
+							   textDecoration="underline"
+							   icon="{logoutIcon}"/>
+			</s:HGroup>
+		</s:HGroup>
+	</s:controlBarContent>	
+	<s:layout>
+		<s:BasicLayout />
+	</s:layout>
+	<s:Scroller width="100%" height="100%" includeIn="designerEmployeeState,userState">
+		<s:Group width="100%" height="100%">
+			<s:HGroup 
+				width="100%" height="100%">
+				<components:ToolWindow 
+					width="70%" height="100%">
+				</components:ToolWindow>
+				<s:VGroup 
+					minWidth="300" maxWidth="350"
+					width="30%" height="100%"
+					gap="20">
+					<components:catalog
+						width="100%"/>
+					<components:userProjects 
+						title="Мои проекты" 
+						width="100%" 
+						includeIn="userState"/>
+					<components:clientProjects
+						width="100%"
+						includeIn="designerEmployeeState" />
+					<components:furnitureList 
+						includeIn="designerEmployeeState"
+						width="100%" />
+				</s:VGroup>	
+			</s:HGroup>
+		</s:Group>
+	</s:Scroller>
+	<s:VGroup 
+		verticalCenter="0" horizontalCenter="0"
+		width="50%" includeIn="designerEmployeeState,managerState,userState">
+		<mx:DataGrid includeIn="managerState"
+					 width="100%">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Номер заказа" dataField="col1"/>
+				<mx:DataGridColumn headerText="Дата" dataField="col2"/>
+				<mx:DataGridColumn headerText="ФИО клиента" dataField="col3"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<s:List includeIn="managerState" 
+				x="158" y="245" 
+				height="77" width="100%"></s:List>
+	</s:VGroup>
+	<s:VGroup
+		horizontalCenter="0"
+		verticalCenter="0"
+		width="70%" height="50%"
+		includeIn="adminState">
+		<mx:TabNavigator width="100%" height="100%"
+						 minHeight="150">
+			<s:NavigatorContent 
+				label="Дизайнеры" 
+				width="100%" height="100%">
+				<mx:DataGrid
+					height="100%" width="100%">
+					<mx:columns>
+						<mx:DataGridColumn headerText="Имя" dataField="col1"/>
+						<mx:DataGridColumn headerText="Фамилия" dataField="col2"/>
+						<mx:DataGridColumn headerText="Логин" dataField="col3"/>
+						<mx:DataGridColumn headerText="Номер телефона" dataField="col3"/>
+					</mx:columns>
+				</mx:DataGrid>
+			</s:NavigatorContent>
+			<s:NavigatorContent 
+				label="Менеджеры" 
+				width="100%" height="100%">
+				<mx:DataGrid
+					height="100%" width="100%">
+					<mx:columns>
+						<mx:DataGridColumn headerText="Имя" dataField="col1"/>
+						<mx:DataGridColumn headerText="Фамилия" dataField="col2"/>
+						<mx:DataGridColumn headerText="Логин" dataField="col3"/>
+						<mx:DataGridColumn headerText="Номер телефона" dataField="col3"/>
+					</mx:columns>
+				</mx:DataGrid>
+			</s:NavigatorContent>
+		</mx:TabNavigator>
+		<s:Panel title="Добавить нового пользователя"
+				 width="100%">
+			<s:VGroup
+				horizontalAlign="center"
+				width="100%">
+				<s:HGroup>
+					<mx:Form>
+						<mx:FormItem label="Имя:">
+							<s:TextInput />
+						</mx:FormItem>
+						<mx:FormItem label="Фамилия:">
+							<s:TextInput />
+						</mx:FormItem>
+						<mx:FormItem label="Номер телефона:">
+							<s:TextInput />
+						</mx:FormItem>
+					</mx:Form>
+					<mx:Form>
+						<mx:FormItem label="Логин:">
+							<s:TextInput />
+						</mx:FormItem>
+						<mx:FormItem label="Пароль:">
+							<s:TextInput />
+						</mx:FormItem>
+						<mx:FormItem label="Повторите пароль:">
+							<s:TextInput />
+						</mx:FormItem>
+					</mx:Form>
+				</s:HGroup>
+			</s:VGroup>
+		</s:Panel>
+	</s:VGroup>
+</s:Panel>

@@ -15,11 +15,11 @@
 	<fx:Script>
 		<![CDATA[
 			import events.LoginEvent;
-			
+		
 			import mx.controls.Alert;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
-
+			
 			protected function loginService_resultHandler(event:ResultEvent):void
 			{
 				var result:Object = event.result;
@@ -35,9 +35,6 @@
 
 			protected function loginButton_clickHandler(event:MouseEvent):void
 			{
-				if (login.text == "admin" && password.text == "admin"){
-					dispatchEvent(new LoginEvent(new XML()));	
-				}
 				loginService.send(
 					{login: login.text, password: password.text});
 			}
@@ -69,6 +66,20 @@
 			<mx:FormItem label="Пароль:">
 				<s:TextInput id="password" 
 							 displayAsPassword="true"/>
+			</mx:FormItem>
+			<mx:FormItem label="Роль в системе:">
+				<s:ComboBox id="systemRoles"> 
+					<s:dataProvider> 
+						<mx:ArrayCollection> 
+							<mx:source> 
+								<fx:Object label="Посетитель" data="user"/> 
+								<fx:Object label="Дизайнер" data="designer"/> 
+								<fx:Object label="Менеджер" data="manager"/>
+								<fx:Object label="Администратор" data="admin" />
+							</mx:source> 
+						</mx:ArrayCollection> 
+					</s:dataProvider>      
+				</s:ComboBox> 
 			</mx:FormItem>
 		</mx:Form>
 		<s:HGroup>
