@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="components.*">
+<s:Panel
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="components.*"
+	title="Каталог мебели">
 	<fx:Script>
 		<![CDATA[
 			[Bindable]
@@ -12,7 +14,7 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<mx:Accordion >
+	<mx:Accordion width="100%">
 		<s:NavigatorContent label="Кухни">
 			<components:searchForm />
 		</s:NavigatorContent>
@@ -38,4 +40,4 @@
 			<components:searchForm />
 		</s:NavigatorContent>
 	</mx:Accordion>
-</s:Group>
+</s:Panel>

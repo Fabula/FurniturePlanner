@@ -3,15 +3,95 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 skinClass="skins.customPanelSkin">
+	<fx:Metadata>
+		[Event(name="projectCreate", type="events.ProjectEvent")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import events.ProjectEvent;
+			
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.controls.Alert;
+			
+			[Embed(source="icons/page_white.png")] 
+			[Bindable]
+			public var newProjectIcon:Class; 
+			
+			[Embed(source="icons/disk.png")] 
+			[Bindable]
+			public var saveProjectIcon:Class; 
+			
+			[Embed(source="icons/printer.png")] 
+			[Bindable]
+			public var printProjectIcon:Class; 
+			
+			protected function handleProjectCreateResult(event:ResultEvent):void
+			{
+				var resultXML:XML = XML(event.result);
+				dispatchEvent(new ProjectEvent(ProjectEvent.PROJECT_CREATE, resultXML));
+				saveProjectButton.enabled = true;
+			}
+			
+			protected function saveProjectButtonClickHandler(event:MouseEvent):void
+			{
+				svcCreateProject.send();
+				saveProjectButton.enabled = false;
+			}
+
+
+
+			protected function svcCreateProject_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+				saveProjectButton.enabled = true;
+			}
+
+		]]>
+	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<mx:HTTPService id="svcCreateProject"
+						url="http://localhost:3000/projects.xml"
+						contentType="application/xml"
+						resultFormat="e4x"
+						method="POST"
+						result="handleProjectCreateResult(event)"
+						fault="svcCreateProject_faultHandler(event)">
+			<mx:request xmlns="">
+				<project>
+					<name>{projectName.text}</name>
+					<designerHelp>{designerHelp.selected}</designerHelp>
+				</project>
+			</mx:request>
+		</mx:HTTPService>
 	</fx:Declarations>
 	<s:controlBarContent>
-		<s:HGroup verticalAlign="middle"
-				  gap="20">
-			<s:BitmapImage source="@Embed('icons/page_white.png')" />
-			<s:BitmapImage source="@Embed('icons/disk.png')" />
-			<s:BitmapImage source="@Embed('icons/printer.png')" />
-		</s:HGroup>
+		<mx:TabNavigator id="projectControlBar"
+						 width="110%" height="110%"
+						 paddingLeft="10" paddingBottom="10" paddingTop="10" paddingRight="10">
+			<s:NavigatorContent label="Создать проект"
+								icon="{newProjectIcon}">
+				<s:HGroup verticalAlign="middle"
+						  gap="40">
+					<s:HGroup verticalAlign="middle">
+						<s:Label text="Название проекта:" />
+						<s:TextInput id="projectName"/>
+					</s:HGroup>
+					<s:HGroup verticalAlign="middle">
+						<s:Label text="Требуется ли помощь дизайнера:" />
+						<s:CheckBox id="designerHelp"/>
+					</s:HGroup>
+					<s:HGroup>
+						<s:Button id="saveProjectButton"
+								  label="Создать" 
+								  click="saveProjectButtonClickHandler(event)"/>
+					</s:HGroup>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent label="Печать проекта"
+								icon="{printProjectIcon}">
+			</s:NavigatorContent>
+		</mx:TabNavigator>
 	</s:controlBarContent>
 </s:Panel>

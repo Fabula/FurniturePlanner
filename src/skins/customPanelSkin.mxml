@@ -206,7 +206,7 @@ in accordance with the terms of the license agreement accompanying it.
 				<!--- @copy spark.components.Panel#controlBarGroup -->
 				<s:Group id="controlBarGroup" left="0" right="0" top="1" bottom="1" minWidth="0" minHeight="0">
 					<s:layout>
-						<s:HorizontalLayout paddingLeft="10" paddingRight="10" paddingTop="7" paddingBottom="7" gap="10" />
+						<s:HorizontalLayout gap="10" />
 					</s:layout>
 				</s:Group>
 				<!-- layer 0: control bar divider line -->

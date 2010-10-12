@@ -3,9 +3,10 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:components="components.*"
-		 width="100%" height="100%" >
+		 width="100%" height="100%">
 	<fx:Script>
 		<![CDATA[
+			import events.ProjectEvent;
 			[Embed(source="icons/report.png")] 
 			[Bindable]
 			public var furnitureListIcon:Class; 
@@ -26,6 +27,7 @@
 			[Bindable]
 			public var logoutIcon:Class;
 			
+
 		]]>
 	</fx:Script>
 	<s:states>
@@ -58,7 +60,7 @@
 			<s:HGroup
 				 verticalAlign="middle">
 				<mx:LinkButton 
-					label="Учетная запись" 
+					id="accountButton"
 					textDecoration="underline"
 					icon="{accountIcon}"/>
 			</s:HGroup>
@@ -79,7 +81,8 @@
 			<s:HGroup 
 				width="100%" height="100%">
 				<components:ToolWindow 
-					width="70%" height="100%">
+					width="70%" height="100%"
+					projectCreate="{userProjects.displayUserProjects()}">
 				</components:ToolWindow>
 				<s:VGroup 
 					minWidth="300" maxWidth="350"
@@ -88,6 +91,7 @@
 					<components:catalog
 						width="100%"/>
 					<components:userProjects 
+						id="userProjects"
 						title="Мои проекты" 
 						width="100%" 
 						includeIn="userState"/>

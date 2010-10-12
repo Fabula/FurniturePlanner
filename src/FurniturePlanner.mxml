@@ -11,6 +11,9 @@
 			import events.LoginEvent;
 			
 			import mx.controls.Alert;
+			
+			[Bindable]
+			var _user:XML;
 							
 			protected function loginpanel_clickHandler(event:MouseEvent):void
 			{
@@ -41,23 +44,58 @@
 
 			protected function accountCreateHandler(event:AccountCreateEvent):void
 			{
-				Alert.show("Учетная запись успешно создана " + event.user.toString(), "Уведомление");
-				currentState = 'MainState';
+				Alert.show("Учетная запись успешно создана ", "Уведомление");
+				login(event.user);
 			}
 
 
 			protected function loginPanel_loginHandler(event:LoginEvent):void
 			{
+				login(event.user);
+			}
+			
+			private function login(user:XML):void
+			{
+				_user = user;
+
 				currentState = 'MainState';
+				loginPanel.loginButton.enabled = true;
+				mainWindow.accountButton.label = _user.name + " " + _user["last-name"];
+
+				/* switch(_user.system_role){
+					// user
+					case 0:
+						currentState = 'MainState';
+						loginPanel.loginButton.enabled = true;
+						mainWindow.accountButton.label = _user.name + " " + _user.last_name;
+						break;
+					// designer
+					case 1:
+						currentState = 'MainState';
+						mainWindow.currentState = "designerEmployeeState";
+						break;
+					// manager
+					case 2:
+						currentState = 'MainState';
+						mainWindow.currentState = "managerState";
+						break;
+					case 3:
+						currentState = 'MainState';
+						mainWindow.currentState = "adminState";
+						break;
+				} */
 			}
 
 
 			protected function userWindowClickHandler(event:MouseEvent):void
 			{
-				if (event.target.id == 'logout' && event.type == 'click'){
+				if (event.target.id == 'logout'){
 					currentState = 'LoginState';
 					loginPanel.login.text = '';
 					loginPanel.password.text = '';
+					mainWindow.accountButton.label = '';
+				}
+				else{
 				}
 			}
 

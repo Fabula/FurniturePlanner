@@ -16,7 +16,7 @@
 			import mx.rpc.events.ResultEvent;
 			
 			[Bindable]
-			public var serverAddress:String = new String("http://localhost:3000/users/create_xml");
+			public var serverAddress:String = new String("http://localhost:3000/users.xml");
 			
 			protected function authorizationService_resultHandler(event:ResultEvent):void
 			{

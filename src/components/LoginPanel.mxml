@@ -25,9 +25,9 @@
 				var result:Object = event.result;
 				if (result == "badlogin"){
 					Alert.show("Неправильный логин или пароль", "Ошибка авторизации");
+					loginButton.enabled = true;
 				}
 				else{
-					Alert.show(result.toString());
 					dispatchEvent(new LoginEvent(XML(result)));
 				}
 			}
@@ -37,6 +37,7 @@
 			{
 				loginService.send(
 					{login: login.text, password: password.text});
+				loginButton.enabled = false;
 			}
 
 
@@ -51,7 +52,7 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<s:HTTPService id = "loginService"
-					   url = "http://localhost:3000/sessions/create_xml"
+					   url = "http://localhost:3000/session.xml"
 					   method="POST" 
 					   resultFormat="e4x"
 					   result="loginService_resultHandler(event)"
