@@ -2,18 +2,21 @@
 <s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 skinClass="skins.customPanelSkin">
-	<fx:Metadata>
-		[Event(name="projectCreate", type="events.ProjectEvent")]
-	</fx:Metadata>
+		 xmlns:degrafa="http://www.degrafa.com/2007"
+		 skinClass="skins.customPanelSkin"
+		 creationComplete="toolWindowCreationCompleteHandler(event);">
 	<fx:Script>
-		<![CDATA[
-			import events.ProjectEvent;
+		<![CDATA[						
+			import com.degrafa.IGeometry;
+			import com.degrafa.core.IGraphicsStroke;
+			import com.degrafa.core.utils.ColorUtil;
+			import com.degrafa.geometry.Path;
+			import com.degrafa.geometry.segment.LineTo;
+			import com.degrafa.paint.SolidStroke;
 			
-			import mx.rpc.events.FaultEvent;
-			import mx.rpc.events.ResultEvent;
 			import mx.controls.Alert;
-			
+			import mx.events.FlexEvent;
+						
 			[Embed(source="icons/page_white.png")] 
 			[Bindable]
 			public var newProjectIcon:Class; 
@@ -26,72 +29,146 @@
 			[Bindable]
 			public var printProjectIcon:Class; 
 			
-			protected function handleProjectCreateResult(event:ResultEvent):void
-			{
-				var resultXML:XML = XML(event.result);
-				dispatchEvent(new ProjectEvent(ProjectEvent.PROJECT_CREATE, resultXML));
-				saveProjectButton.enabled = true;
+			[Bindable]
+			public var stroke:com.degrafa.core.IGraphicsStroke; // line style
+			
+			[Bindable]
+			private var fillColor:uint = 0x333333; //background of canvas area
+			
+			[Bindable]
+			private var _strokeAlpha:Number = 1.0;
+			
+			[Bindable]            
+			private var _strokeColor:uint = 0x66CCFF;
+			
+			[Bindable]
+			private var _strokeWeight:uint = 10;
+
+			[Bindable]
+			private var _lineCap:String = "round";
+			
+			[Bindable]
+			private var _lineJoin:String = "miter";
+			
+			[Bindable]
+			public var userProject:String = '';
+			
+			private var painting:Boolean = false;
+			private var currentPath:Path;
+						
+			private function startPainting(event:MouseEvent):void{
+				painting = true;				
+				var path:String = "M " + paintCanvas.mouseX + " " + paintCanvas.mouseY;
+				currentPath = new Path(path);
+				currentPath.stroke = this.stroke;
+				
+				canvas.geometryCollection.addItem(currentPath);
 			}
 			
-			protected function saveProjectButtonClickHandler(event:MouseEvent):void
+			private function paintPath(event:MouseEvent):void{
+				if (painting){
+					var data:String = paintCanvas.mouseX + " " + paintCanvas.mouseY;
+					currentPath.segmentCollection.addItem(new LineTo(paintCanvas.mouseX, paintCanvas.mouseY, data));
+					currentPath.data += " L " + data;                                          
+					event.updateAfterEvent();
+				}
+			}
+			
+			private function stopPainting(event:MouseEvent):void{
+				painting = false;
+				userProject += getGeometryString(canvas);
+			}
+			
+			public function getGeometryString(geometry:IGeometry):String
 			{
-				svcCreateProject.send();
-				saveProjectButton.enabled = false;
+				var svgText:String = '';
+				if (geometry is GeometryGroup)
+				{
+					var group:GeometryGroup = geometry as GeometryGroup;
+					
+					svgText += '<g id="' + group.id +
+						'> \r';
+					
+					if (group.geometryCollection.items.length > 0)
+					{
+						for each (var node:IGeometry in group.geometryCollection.items)
+						{
+							svgText += getGeometryString(node);
+						}
+					}
+					svgText += '</g> \r';
+				}
+				else if (geometry is Path)
+				{
+					var path:Path = geometry as Path;                                                
+					svgText += '<path id="' + path.id + '" \r' +
+						getStyleString(path.stroke) + 
+						'  d="' + path.data + '\" /> \r';
+				}
+				return svgText;
+			}
+			
+			public function getStyleString(stroke:com.degrafa.core.IGraphicsStroke):String
+			{
+				var strokeStr:String = '';
+				if (stroke is SolidStroke)
+				{
+					var solidStroke:SolidStroke = stroke as SolidStroke;
+					strokeStr += '  style="' +
+						'stroke: ' + ColorUtil.decColorToHex(_strokeColor, "#") +
+						'; stroke-width: ' + _strokeWeight +
+						'; stroke-opacity: ' + _strokeAlpha +                         
+						'; stroke-linecap: ' + _lineCap +
+						'; stroke-linejoin: ' + _lineJoin + 
+						'" \r';    
+				}
+				return strokeStr;
 			}
 
 
-
-			protected function svcCreateProject_faultHandler(event:FaultEvent):void
+			protected function toolWindowCreationCompleteHandler(event:FlexEvent):void
 			{
-				Alert.show(event.fault.faultString);
-				saveProjectButton.enabled = true;
+				stroke = new SolidStroke(this._strokeColor,this._strokeAlpha,this._strokeWeight);
+/* 				stroke.caps = this._lineCap;
+				stroke.joints = this._lineJoin; */
+			}
+
+
+			public function newProjectClickHandler():void
+			{
+				var itemCount:uint = canvas.geometryCollection.items.length; 
+				
+				for (var i:int = 0; i < itemCount; i++){
+					currentPath = canvas.geometryCollection.getItemAt(i) as Path;
+					canvas.geometryCollection.removeItem(currentPath);
+				}
 			}
 
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<mx:HTTPService id="svcCreateProject"
-						url="http://localhost:3000/projects.xml"
-						contentType="application/xml"
-						resultFormat="e4x"
-						method="POST"
-						result="handleProjectCreateResult(event)"
-						fault="svcCreateProject_faultHandler(event)">
-			<mx:request xmlns="">
-				<project>
-					<name>{projectName.text}</name>
-					<designerHelp>{designerHelp.selected}</designerHelp>
-				</project>
-			</mx:request>
-		</mx:HTTPService>
 	</fx:Declarations>
 	<s:controlBarContent>
-		<mx:TabNavigator id="projectControlBar"
-						 width="110%" height="110%"
-						 paddingLeft="10" paddingBottom="10" paddingTop="10" paddingRight="10">
-			<s:NavigatorContent label="Создать проект"
-								icon="{newProjectIcon}">
-				<s:HGroup verticalAlign="middle"
-						  gap="40">
-					<s:HGroup verticalAlign="middle">
-						<s:Label text="Название проекта:" />
-						<s:TextInput id="projectName"/>
-					</s:HGroup>
-					<s:HGroup verticalAlign="middle">
-						<s:Label text="Требуется ли помощь дизайнера:" />
-						<s:CheckBox id="designerHelp"/>
-					</s:HGroup>
-					<s:HGroup>
-						<s:Button id="saveProjectButton"
-								  label="Создать" 
-								  click="saveProjectButtonClickHandler(event)"/>
-					</s:HGroup>
-				</s:HGroup>
-			</s:NavigatorContent>
-			<s:NavigatorContent label="Печать проекта"
-								icon="{printProjectIcon}">
-			</s:NavigatorContent>
-		</mx:TabNavigator>
+		<s:HGroup width="100%" height="100%"
+				  paddingLeft="5" paddingTop="5" paddingBottom="5"
+				  verticalAlign="middle">
+			<mx:LinkButton icon="{newProjectIcon}"
+						   click="newProjectClickHandler()"/>
+			<mx:LinkButton icon="{printProjectIcon}" />
+		</s:HGroup>
 	</s:controlBarContent>
+	<s:Group width="100%" height="100%">
+		<mx:Canvas id="paintCanvas"
+				   width="100%" height="500"
+				   backgroundColor="{this.fillColor}"
+				   mouseDown="startPainting(event);" 
+				   mouseMove="paintPath(event)" 
+				   mouseUp="stopPainting(event);">
+			<degrafa:Surface id="surface">
+				<degrafa:GeometryGroup id="canvas">
+				</degrafa:GeometryGroup>			
+			</degrafa:Surface>
+		</mx:Canvas>
+	</s:Group>
 </s:Panel>

@@ -50,6 +50,7 @@
 			protected function registration_clickHandler(event:MouseEvent):void
 			{
 				authorizationService.send();
+				registrationButton.enabled = false;
 			}
 
 		]]>
@@ -124,7 +125,7 @@
 		</mx:Form>
 		<s:HGroup>
 			<s:Button 
-				id = "registration" 
+				id = "registrationButton" 
 				label = "Создать" 
 				click="registration_clickHandler(event)"/>
 		</s:HGroup>

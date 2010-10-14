@@ -4,16 +4,22 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   width="100%" height="100%"
 			   xmlns:components="components.*"
-			   currentState='LoginState' >
+			   currentState='LoginState'>
 	<fx:Script>
 		<![CDATA[
+			import components.ToolWindow;
+			
 			import events.AccountCreateEvent;
 			import events.LoginEvent;
+			import events.LogoutEvent;
 			
 			import mx.controls.Alert;
+			import mx.events.StateChangeEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
 			
 			[Bindable]
-			var _user:XML;
+			public var _user:XML;
 							
 			protected function loginpanel_clickHandler(event:MouseEvent):void
 			{
@@ -57,52 +63,25 @@
 			private function login(user:XML):void
 			{
 				_user = user;
-
 				currentState = 'MainState';
+				mainWindow.currentState = 'userState';
 				loginPanel.loginButton.enabled = true;
 				mainWindow.accountButton.label = _user.name + " " + _user["last-name"];
-
-				/* switch(_user.system_role){
-					// user
-					case 0:
-						currentState = 'MainState';
-						loginPanel.loginButton.enabled = true;
-						mainWindow.accountButton.label = _user.name + " " + _user.last_name;
-						break;
-					// designer
-					case 1:
-						currentState = 'MainState';
-						mainWindow.currentState = "designerEmployeeState";
-						break;
-					// manager
-					case 2:
-						currentState = 'MainState';
-						mainWindow.currentState = "managerState";
-						break;
-					case 3:
-						currentState = 'MainState';
-						mainWindow.currentState = "adminState";
-						break;
-				} */
 			}
 
-
-			protected function userWindowClickHandler(event:MouseEvent):void
+			protected function mainWindow_logoutHandler(event:LogoutEvent):void
 			{
-				if (event.target.id == 'logout'){
-					currentState = 'LoginState';
-					loginPanel.login.text = '';
-					loginPanel.password.text = '';
-					mainWindow.accountButton.label = '';
+				currentState = 'LoginState';
+				loginPanel.login.text = '';
+				loginPanel.password.text = '';
+				mainWindow.accountButton.label = '';
+				if (mainWindow.userProjects.projectsList.dataProvider.length !== 0){
+					mainWindow.userProjects.projectsList.dataProvider.removeAll();
 				}
-				else{
-				}
+				mainWindow.toolWindow.newProjectClickHandler();
 			}
-
 		]]>
 	</fx:Script>
-
-
 	<s:states>
 		<s:State name="LoginState"/>
 		<s:State name="MainState"/>
@@ -134,5 +113,5 @@
 	<components:mainWindow
 		id="mainWindow"
 		includeIn="MainState"
-		click="userWindowClickHandler(event)"/>
+		logout="mainWindow_logoutHandler(event)"/>
 </s:Application>
