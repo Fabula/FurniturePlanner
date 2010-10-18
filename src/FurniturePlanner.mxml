@@ -2,25 +2,24 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
-			   width="100%" height="100%"
 			   xmlns:components="components.*"
+			   width="100%" height="100%"
 			   currentState='LoginState'>
 	<fx:Script>
 		<![CDATA[
 			import components.ToolWindow;
+			import components.UserData;
 			
 			import events.AccountCreateEvent;
 			import events.LoginEvent;
 			import events.LogoutEvent;
 			
 			import mx.controls.Alert;
+			import mx.events.FlexEvent;
 			import mx.events.StateChangeEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
-			
-			[Bindable]
-			public var _user:XML;
-							
+										
 			protected function loginpanel_clickHandler(event:MouseEvent):void
 			{
 				if (event.target.id == 'loginButton'){
@@ -62,23 +61,57 @@
 			
 			private function login(user:XML):void
 			{
-				_user = user;
-				currentState = 'MainState';
-				mainWindow.currentState = 'userState';
+				UserData.getInstance().setUserData(user);
+				
+				checkPrivilegies();
 				loginPanel.loginButton.enabled = true;
-				mainWindow.accountButton.label = _user.name + " " + _user["last-name"];
+				
+				if (mainWindow.userProjects){
+					mainWindow.userProjects.displayUserProjects();	
+				} 
 			}
-
+			
+			protected function checkPrivilegies():void{
+				var user:XML = UserData.getInstance().getUserData();
+				var system_role:String = user["system-role"];
+				
+				switch(system_role){
+					case "user":
+						currentState = 'MainState';
+						mainWindow.currentState = 'userState';
+						mainWindow.accountButton.label = user.name + " " + user["last-name"];
+						break;
+					case "admin":
+						currentState = 'MainState';
+						mainWindow.currentState = 'adminState';
+						mainWindow.accountButton.label = user.name + " " + user["last-name"];					
+				}
+			}
+			
 			protected function mainWindow_logoutHandler(event:LogoutEvent):void
-			{
+			{				
+				if (mainWindow.currentState == "userState"){
+					clearCanvas();
+					clearProjectsList();
+				}
+				mainWindow.accountButton.label = '';
+				clearLoginPanelFields();
+				// dirty
 				currentState = 'LoginState';
+
+			}
+			
+			protected function clearCanvas():void{
+				mainWindow.toolWindow.newProjectClickHandler();
+			}
+			
+			protected function clearProjectsList():void{
+				mainWindow.userProjects.projectsList.dataProvider.removeAll();
+			}
+			
+			protected function clearLoginPanelFields():void{
 				loginPanel.login.text = '';
 				loginPanel.password.text = '';
-				mainWindow.accountButton.label = '';
-				if (mainWindow.userProjects.projectsList.dataProvider.length !== 0){
-					mainWindow.userProjects.projectsList.dataProvider.removeAll();
-				}
-				mainWindow.toolWindow.newProjectClickHandler();
 			}
 		]]>
 	</fx:Script>

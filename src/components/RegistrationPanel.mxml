@@ -71,7 +71,6 @@
 					<name>{userName.text}</name>
 					<last_name>{userSurName.text}</last_name>
 					<telephone_number>{telephoneNumber.text}</telephone_number>
-					<system_role>0</system_role>
 					<password>{userPassword.text}</password>
 					<password_confirmation>{userPasswordConfirmation.text}</password_confirmation>
 				</user>
