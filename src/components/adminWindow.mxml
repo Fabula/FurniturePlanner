@@ -2,92 +2,149 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		  xmlns:s="library://ns.adobe.com/flex/spark" 
 		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  creationComplete="adminPanelCreationCompleteHandler(event)"
 		  horizontalCenter="0" verticalCenter="0"
-		  width="70%" height="50%"
-		  gap="20">
+		  width="100%" height="100%">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]
+			public var userCategories:ArrayCollection = new ArrayCollection(["посетитель","дизайнер","менеджер"]);
+				
+			protected function srvGetUsersList_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultDetail);
+			}
+
+
+			protected function adminPanelCreationCompleteHandler(event:FlexEvent):void
+			{
+				//srvGetUsersList.send();
+			}
+			
+			protected function clearSearchField(event:MouseEvent):void{
+				searchField.text = "";
+			}
+
+		]]>
+	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<mx:HTTPService id="srvGetUsersList"
+						url="http://localhost:3000/users_list"
+						method="GET"
+						fault="srvGetUsersList_faultHandler(event)" />
 	</fx:Declarations>
-	<s:Panel title="Пользователи системы"
-			 width="100%" height="100%"
-			 minHeight="300">
-		<s:HGroup width="100%" height="100%"
-				  paddingBottom="10" paddingTop="10" paddingRight="10" paddingLeft="10">
-			<mx:TabNavigator width="100%" height="100%">
-				<s:NavigatorContent 
-					label="Дизайнеры" 
-					width="100%" height="100%">
-					<mx:DataGrid
-						height="100%" width="100%"
-						paddingLeft="10" paddingRight="10" paddingBottom="10">
-						<mx:columns>
-							<mx:DataGridColumn headerText="Имя" dataField="col1"/>
-							<mx:DataGridColumn headerText="Фамилия" dataField="col2"/>
-							<mx:DataGridColumn headerText="Логин" dataField="col3"/>
-							<mx:DataGridColumn headerText="Номер телефона" dataField="col3"/>
-						</mx:columns>
-					</mx:DataGrid>
-				</s:NavigatorContent>
-				<s:NavigatorContent 
-					label="Менеджеры" 
-					width="100%" height="100%">
-					<mx:DataGrid
-						height="100%" width="100%"
-						paddingLeft="10" paddingRight="10" paddingBottom="10">
-						<mx:columns>
-							<mx:DataGridColumn headerText="Имя" dataField="col1"/>
-							<mx:DataGridColumn headerText="Фамилия" dataField="col2"/>
-							<mx:DataGridColumn headerText="Логин" dataField="col3"/>
-							<mx:DataGridColumn headerText="Номер телефона" dataField="col3"/>
-						</mx:columns>
-					</mx:DataGrid>
-				</s:NavigatorContent>
-				<s:NavigatorContent
-					label="Клиенты"
-					width="100%" height="100%">
-					<mx:DataGrid
-						height="100%" width="100%"
-						paddingLeft="10" paddingRight="10" paddingBottom="10">
-						<mx:columns>
-							<mx:DataGridColumn headerText="Имя" dataField="col1"/>
-							<mx:DataGridColumn headerText="Фамилия" dataField="col2"/>
-							<mx:DataGridColumn headerText="Логин" dataField="col3"/>
-							<mx:DataGridColumn headerText="Номер телефона" dataField="col3"/>
-						</mx:columns>
-					</mx:DataGrid>
-				</s:NavigatorContent>
-			</mx:TabNavigator>
+<s:Scroller width="100%" height="100%">
+	<s:Group width="100%" height="100%">
+		<s:HGroup width="100%" height="100%">
+			<s:Panel title="Добавить нового пользователя"
+					 width="350">
+				<mx:Form>
+					<mx:FormItem label="Категория пользователя:">
+						<mx:ComboBox dataProvider="{userCategories}" />
+					</mx:FormItem>
+					<mx:FormItem label="Имя пользователя: ">
+						<s:TextInput />
+					</mx:FormItem>
+					<mx:FormItem label="Фамилия пользователя: ">
+						<s:TextInput />
+					</mx:FormItem>
+					<mx:FormItem label="Номер телефона: ">
+						<s:TextInput />
+					</mx:FormItem>
+					<mx:FormItem label="Логин: ">
+						<s:TextInput />
+					</mx:FormItem>
+					<mx:FormItem label="Пароль: ">
+						<s:TextInput />
+					</mx:FormItem>
+					<mx:FormItem label="Повторите пароль: ">
+						<s:TextInput />
+					</mx:FormItem>
+					<mx:FormItem>
+						<s:Button label="Создать" />
+					</mx:FormItem>
+				</mx:Form>
+			</s:Panel>
+			<s:VGroup width="100%" height="100%"
+					  minWidth="570">
+				<s:Panel title="Пользователи системы"
+						 width="100%" height="100%"
+						 minHeight="300">
+					<s:VGroup width="100%" height="100%"
+							  gap="10"
+							  paddingBottom="10" paddingTop="10" paddingRight="10" paddingLeft="10">
+						<s:HGroup width="100%"
+								  verticalAlign="middle">
+							<s:Label text="Поиск:" />
+							<s:TextInput id="searchField"
+										 width="100%" 
+										 click="clearSearchField(event)"/>
+						</s:HGroup>
+						<s:HGroup width="100%"
+								  verticalAlign="middle">
+							<s:Label text="Категория пользователя:" />
+							<mx:ComboBox id="usersCategoryList"
+										 dataProvider="{userCategories}"/>
+						</s:HGroup>
+						<mx:DataGrid
+							id="usersListDatagrid"
+							dataProvider="{srvGetUsersList.lastResult.users.user}"
+							height="100%" width="100%"
+							paddingLeft="10" paddingRight="10" paddingBottom="10">
+							<mx:columns>
+								<mx:DataGridColumn headerText="Имя" dataField="name"/>
+								<mx:DataGridColumn headerText="Фамилия" dataField="last-name"/>
+								<mx:DataGridColumn headerText="Логин" dataField="login"/>
+								<mx:DataGridColumn headerText="Номер телефона" dataField="telephone-number"/>
+							</mx:columns>
+						</mx:DataGrid>
+					</s:VGroup>
+				</s:Panel>
+				<s:Panel title="Изменить данные пользователя"
+						 width="100%">
+					<s:VGroup
+						horizontalAlign="center"
+						width="100%">
+						<s:HGroup>
+							<mx:Form>
+								<mx:FormItem label="Имя:">
+									<s:TextInput />
+								</mx:FormItem>
+								<mx:FormItem label="Фамилия:">
+									<s:TextInput />
+								</mx:FormItem>
+								<mx:FormItem label="Номер телефона:">
+									<s:TextInput />
+								</mx:FormItem>
+							</mx:Form>
+							<mx:Form>
+								<mx:FormItem label="Логин:">
+									<s:TextInput />
+								</mx:FormItem>
+								<mx:FormItem label="Пароль:">
+									<s:TextInput />
+								</mx:FormItem>
+								<mx:FormItem label="Повторите пароль:">
+									<s:TextInput />
+								</mx:FormItem>
+							</mx:Form>
+						</s:HGroup>
+						<s:HGroup width="100%"
+								  horizontalAlign="center"
+								  paddingBottom="10">
+							<s:Button label="Изменить данные пользователя" />
+						</s:HGroup>
+					</s:VGroup>
+				</s:Panel>
+			</s:VGroup>
 		</s:HGroup>
-	</s:Panel>
-	<s:Panel title="Добавить нового пользователя"
-			 width="100%">
-		<s:VGroup
-			horizontalAlign="center"
-			width="100%">
-			<s:HGroup>
-				<mx:Form>
-					<mx:FormItem label="Имя:">
-						<s:TextInput />
-					</mx:FormItem>
-					<mx:FormItem label="Фамилия:">
-						<s:TextInput />
-					</mx:FormItem>
-					<mx:FormItem label="Номер телефона:">
-						<s:TextInput />
-					</mx:FormItem>
-				</mx:Form>
-				<mx:Form>
-					<mx:FormItem label="Логин:">
-						<s:TextInput />
-					</mx:FormItem>
-					<mx:FormItem label="Пароль:">
-						<s:TextInput />
-					</mx:FormItem>
-					<mx:FormItem label="Повторите пароль:">
-						<s:TextInput />
-					</mx:FormItem>
-				</mx:Form>
-			</s:HGroup>
-		</s:VGroup>
-	</s:Panel>
+	</s:Group>
+</s:Scroller>
 </s:VGroup>
