@@ -4,7 +4,8 @@
 		  xmlns:mx="library://ns.adobe.com/flex/mx"
 		  creationComplete="adminPanelCreationCompleteHandler(event)"
 		  horizontalCenter="0" verticalCenter="0"
-		  width="100%" height="100%">
+		  width="100%" height="100%"
+		  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10">
 	<fx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
@@ -15,6 +16,9 @@
 			
 			[Bindable]
 			public var userCategories:ArrayCollection = new ArrayCollection(["посетитель","дизайнер","менеджер"]);
+						
+			[Bindable]
+			private var currentUser:Object;
 				
 			protected function srvGetUsersList_faultHandler(event:FaultEvent):void
 			{
@@ -24,11 +28,105 @@
 
 			protected function adminPanelCreationCompleteHandler(event:FlexEvent):void
 			{
-				//srvGetUsersList.send();
+				updateUsersList();
+			}
+			
+			protected function updateUsersList():void{
+				srvGetUsersList.send();
 			}
 			
 			protected function clearSearchField(event:MouseEvent):void{
 				searchField.text = "";
+			}
+
+
+			protected function srvGetUsersList_resultHandler(event:ResultEvent):void
+			{
+				usersListDatagrid.dataProvider = event.result.users.user;
+			}
+
+
+			protected function usersListDatagrid_clickHandler(event:MouseEvent):void
+			{
+				currentUser = usersListDatagrid.selectedItem;
+			}
+
+
+			protected function srvChangeUserData_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("Данные успешно изменены", "Уведомление");
+				updateUsersList();
+				changeUserDataButton.enabled = true;
+			}
+
+
+			protected function srvChangeUserData_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultDetail);
+				changeUserDataButton.enabled = true;
+			}
+
+
+			protected function changeUserDataButton_clickHandler(event:MouseEvent):void
+			{
+				var currentUserID:int = usersListDatagrid.selectedItem.id.value;
+				srvChangeUserData.url = "http://localhost:3000/users/" + currentUserID + ".xml";
+				srvChangeUserData.send();
+				changeUserDataButton.enabled = false;
+			}
+
+
+			protected function srvCreateNewUser_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("Учетная запись успешно создана", "Уведомление");
+				updateUsersList();
+				createUserButton.enabled = true;
+			}
+
+
+			protected function srvCreateNewUser_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+				createUserButton.enabled = true;
+			}
+
+
+			protected function createUserButton_clickHandler(event:MouseEvent):void
+			{
+				srvCreateNewUser.send();
+				createUserButton.enabled = false;
+			}
+
+
+			protected function srvDestroyUser_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("Учетная запись пользователя успешно удалена","Уведомление");
+				clearUserDataForm();
+				updateUsersList();
+				destroyUserButton.enabled = true;
+			}
+			
+			protected function clearUserDataForm():void{
+				nameTextInput.text = "";
+				surNameTextInput.text = "";
+				telephoneNumberTextInput.text = "";
+				emailTextInput.text = "";
+				loginTextInput.text = "";
+				
+			}
+
+			protected function srvDestroyUser_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+				destroyUserButton.enabled = true;
+			}
+
+
+			protected function destroyUserButton_clickHandler(event:MouseEvent):void
+			{
+				srvDestroyUser.url = "http://localhost:3000/users/" + currentUser.id.value + ".xml";
+				srvDestroyUser.send({_method:"DELETE"});
+				destroyUserButton.enabled = false;
 			}
 
 		]]>
@@ -36,9 +134,47 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<mx:HTTPService id="srvGetUsersList"
-						url="http://localhost:3000/users_list"
+						url="http://localhost:3000/users.xml"
 						method="GET"
+						result="srvGetUsersList_resultHandler(event)"
 						fault="srvGetUsersList_faultHandler(event)" />
+		<s:HTTPService id="srvChangeUserData"
+						method="POST"
+						result="srvChangeUserData_resultHandler(event)"
+						fault="srvChangeUserData_faultHandler(event)">
+			<s:request xmlns="">
+				<user>
+					<login>{loginTextInput.text}</login>
+					<email>{emailTextInput.text}</email>
+					<name>{nameTextInput.text}</name>
+					<last_name>{surNameTextInput.text}</last_name>
+					<telephone_number>{telephoneNumberTextInput.text}</telephone_number>
+				</user>
+			</s:request>
+		</s:HTTPService>
+		<s:HTTPService id="srvCreateNewUser"
+					   url="http://localhost:3000/users.xml"
+					   method="POST"
+					   contentType="application/xml"
+					   result="srvCreateNewUser_resultHandler(event)"
+					   fault="srvCreateNewUser_faultHandler(event)">
+			<s:request xmlns="">
+				<user>
+					<login>{userLogin.text}</login>
+					<email>{userEmail.text}</email>
+					<name>{userName.text}</name>
+					<last_name>{userSurName.text}</last_name>
+					<telephone_number>{userTelephoneNumber.text}</telephone_number>
+					<system_role>{userCategoriesComboBox.selectedIndex}</system_role>
+					<password>{userPassword.text}</password>
+					<password_confirmation>{userPasswordConfirmation.text}</password_confirmation>
+				</user>
+			</s:request>
+		</s:HTTPService>
+		<s:HTTPService id="srvDestroyUser"
+					   method="POST"
+					   result="srvDestroyUser_resultHandler(event)"
+					   fault="srvDestroyUser_faultHandler(event)"/>
 	</fx:Declarations>
 <s:Scroller width="100%" height="100%">
 	<s:Group width="100%" height="100%">
@@ -47,28 +183,34 @@
 					 width="350">
 				<mx:Form>
 					<mx:FormItem label="Категория пользователя:">
-						<mx:ComboBox dataProvider="{userCategories}" />
+						<mx:ComboBox id="userCategoriesComboBox"
+									 dataProvider="{userCategories}" />
 					</mx:FormItem>
 					<mx:FormItem label="Имя пользователя: ">
-						<s:TextInput />
+						<s:TextInput id="userName"/>
 					</mx:FormItem>
 					<mx:FormItem label="Фамилия пользователя: ">
-						<s:TextInput />
+						<s:TextInput id="userSurName"/>
 					</mx:FormItem>
 					<mx:FormItem label="Номер телефона: ">
-						<s:TextInput />
+						<s:TextInput id="userTelephoneNumber" />
+					</mx:FormItem>
+					<mx:FormItem label="Электронная почта: ">
+						<s:TextInput id="userEmail" />		
 					</mx:FormItem>
 					<mx:FormItem label="Логин: ">
-						<s:TextInput />
+						<s:TextInput id="userLogin"/>
 					</mx:FormItem>
 					<mx:FormItem label="Пароль: ">
-						<s:TextInput />
+						<s:TextInput id="userPassword" />
 					</mx:FormItem>
 					<mx:FormItem label="Повторите пароль: ">
-						<s:TextInput />
+						<s:TextInput id="userPasswordConfirmation" />
 					</mx:FormItem>
 					<mx:FormItem>
-						<s:Button label="Создать" />
+						<s:Button label="Создать" 
+								  id="createUserButton"
+								  click="createUserButton_clickHandler(event)" />
 					</mx:FormItem>
 				</mx:Form>
 			</s:Panel>
@@ -80,12 +222,17 @@
 					<s:VGroup width="100%" height="100%"
 							  gap="10"
 							  paddingBottom="10" paddingTop="10" paddingRight="10" paddingLeft="10">
-						<s:HGroup width="100%"
-								  verticalAlign="middle">
-							<s:Label text="Поиск:" />
-							<s:TextInput id="searchField"
-										 width="100%" 
-										 click="clearSearchField(event)"/>
+						<s:HGroup width="100%">
+							<s:Group height="100%">
+								<s:Label text="Поиск:" top="5"/>
+							</s:Group>
+							<s:VGroup width="100%">
+								<s:TextInput id="searchField"
+											 width="100%" 
+											 click="clearSearchField(event)"/>
+								<mx:Label text='&quot;Например: Орлов Игорь&quot; ' 
+										 fontSize="10" />
+							</s:VGroup>
 						</s:HGroup>
 						<s:HGroup width="100%"
 								  verticalAlign="middle">
@@ -95,14 +242,14 @@
 						</s:HGroup>
 						<mx:DataGrid
 							id="usersListDatagrid"
-							dataProvider="{srvGetUsersList.lastResult.users.user}"
 							height="100%" width="100%"
-							paddingLeft="10" paddingRight="10" paddingBottom="10">
+							paddingLeft="10" paddingRight="10" paddingBottom="10"
+							click="usersListDatagrid_clickHandler(event)">
 							<mx:columns>
 								<mx:DataGridColumn headerText="Имя" dataField="name"/>
-								<mx:DataGridColumn headerText="Фамилия" dataField="last-name"/>
+								<mx:DataGridColumn headerText="Фамилия" dataField="last_name"/>
 								<mx:DataGridColumn headerText="Логин" dataField="login"/>
-								<mx:DataGridColumn headerText="Номер телефона" dataField="telephone-number"/>
+								<mx:DataGridColumn headerText="Номер телефона" dataField="telephone_number"/>
 							</mx:columns>
 						</mx:DataGrid>
 					</s:VGroup>
@@ -111,35 +258,50 @@
 						 width="100%">
 					<s:VGroup
 						horizontalAlign="center"
-						width="100%">
-						<s:HGroup>
+						width="100%" height="100%">
+						<s:HGroup height="100%">
 							<mx:Form>
+								<mx:FormHeading label="Персональные данные" />
 								<mx:FormItem label="Имя:">
-									<s:TextInput />
+									<s:TextInput id="nameTextInput" 
+												 text="{currentUser.name}" />
 								</mx:FormItem>
 								<mx:FormItem label="Фамилия:">
-									<s:TextInput />
+									<s:TextInput id="surNameTextInput"
+												 text="{currentUser.last_name}"/>
 								</mx:FormItem>
 								<mx:FormItem label="Номер телефона:">
-									<s:TextInput />
+									<s:TextInput id="telephoneNumberTextInput"
+												 text="{currentUser.telephone_number}" />
+								</mx:FormItem>
+								<mx:FormItem label="Электронная почта:">
+									<s:TextInput id="emailTextInput"
+												 text="{currentUser.email}" />
 								</mx:FormItem>
 							</mx:Form>
 							<mx:Form>
+								<mx:FormHeading label="Логин/пароль" />
 								<mx:FormItem label="Логин:">
-									<s:TextInput />
+									<s:TextInput id="loginTextInput"
+												 text="{currentUser.login}" enabled="false"/>
 								</mx:FormItem>
 								<mx:FormItem label="Пароль:">
-									<s:TextInput />
+									<s:TextInput id="passwordTextInput"/>
 								</mx:FormItem>
 								<mx:FormItem label="Повторите пароль:">
-									<s:TextInput />
+									<s:TextInput id="passwordConfirmationTextInput"/>
 								</mx:FormItem>
 							</mx:Form>
 						</s:HGroup>
 						<s:HGroup width="100%"
 								  horizontalAlign="center"
 								  paddingBottom="10">
-							<s:Button label="Изменить данные пользователя" />
+							<s:Button label="Изменить данные пользователя" 
+									  id="changeUserDataButton"
+									  click="changeUserDataButton_clickHandler(event)"/>
+							<s:Button id="destroyUserButton"
+									  label="Удалить пользователя"
+									  click="destroyUserButton_clickHandler(event)"/>
 						</s:HGroup>
 					</s:VGroup>
 				</s:Panel>
