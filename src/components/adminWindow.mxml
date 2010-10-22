@@ -2,108 +2,167 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		  xmlns:s="library://ns.adobe.com/flex/spark" 
 		  xmlns:mx="library://ns.adobe.com/flex/mx"
-		  creationComplete="adminPanelCreationCompleteHandler(event)"
 		  horizontalCenter="0" verticalCenter="0"
 		  width="100%" height="100%"
-		  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10">
+		  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
+		  creationComplete="adminPanelCreationCompleteHandler(event)"
+		  currentState="DefaultAdminState">
 	<fx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
+			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.managers.CursorManager;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			
-			[Bindable]
-			public var userCategories:ArrayCollection = new ArrayCollection(["посетитель","дизайнер","менеджер"]);
+			import spark.events.TextOperationEvent;
+			
+			//[Bindable]
+			//public var userCategories:ArrayCollection = new ArrayCollection(["customer","designer","manager"]);
+			
+			private const userCategories:Array = [
+				{label: "все", data: "all"},
+				{label: "посетитель", data: "customer"},
+				{label: "дизайнер", data: "designer"},
+				{label: "менеджер", data: "manager"},
+				{label: "администратор", data: "admin"}
+			];
+			
+			private const categories:Array = [
+				{label: "посетитель", data: "customer"},
+				{label: "дизайнер", data: "designer"},
+				{label: "менеджер", data: "manager"},
+				{label: "администратор", data: "admin"}
+			];
 						
 			[Bindable]
 			private var currentUser:Object;
-				
-			protected function srvGetUsersList_faultHandler(event:FaultEvent):void
-			{
-				Alert.show(event.fault.faultDetail);
-			}
-
-
+			
+			[Bindable]
+			public var usersList:XML;
+			
+			/* On complete event*/
 			protected function adminPanelCreationCompleteHandler(event:FlexEvent):void
 			{
 				updateUsersList();
 			}
 			
 			protected function updateUsersList():void{
+				CursorManager.setBusyCursor();
 				srvGetUsersList.send();
 			}
 			
-			protected function clearSearchField(event:MouseEvent):void{
-				searchField.text = "";
-			}
-
-
-			protected function srvGetUsersList_resultHandler(event:ResultEvent):void
-			{
-				usersListDatagrid.dataProvider = event.result.users.user;
-			}
-
-
 			protected function usersListDatagrid_clickHandler(event:MouseEvent):void
 			{
 				currentUser = usersListDatagrid.selectedItem;
+				this.currentState = "AdminStateWithChangeUserDataPanel";
 			}
-
-
-			protected function srvChangeUserData_resultHandler(event:ResultEvent):void
+			
+			/* Get users list 
+			----------------------------------------------------------------------------
+			---------------------------------------------------------------------------*/
+			
+			protected function srvGetUsersList_resultHandler(event:ResultEvent):void
 			{
-				Alert.show("Данные успешно изменены", "Уведомление");
-				updateUsersList();
-				changeUserDataButton.enabled = true;
+				CursorManager.removeBusyCursor();
+				usersList = XML(event.result);
 			}
-
-
-			protected function srvChangeUserData_faultHandler(event:FaultEvent):void
+			
+			protected function srvGetUsersList_faultHandler(event:FaultEvent):void
 			{
 				Alert.show(event.fault.faultDetail);
-				changeUserDataButton.enabled = true;
+				CursorManager.removeBusyCursor();
 			}
-
-
-			protected function changeUserDataButton_clickHandler(event:MouseEvent):void
-			{
-				var currentUserID:int = usersListDatagrid.selectedItem.id.value;
-				srvChangeUserData.url = "http://localhost:3000/users/" + currentUserID + ".xml";
-				srvChangeUserData.send();
-				changeUserDataButton.enabled = false;
-			}
-
-
-			protected function srvCreateNewUser_resultHandler(event:ResultEvent):void
-			{
-				Alert.show("Учетная запись успешно создана", "Уведомление");
-				updateUsersList();
-				createUserButton.enabled = true;
-			}
-
-
-			protected function srvCreateNewUser_faultHandler(event:FaultEvent):void
-			{
-				Alert.show(event.fault.faultString);
-				createUserButton.enabled = true;
-			}
-
-
+			
+			/* Create new user
+			-----------------------------------------------------------------------------
+			----------------------------------------------------------------------------*/
+			
 			protected function createUserButton_clickHandler(event:MouseEvent):void
 			{
 				srvCreateNewUser.send();
 				createUserButton.enabled = false;
 			}
 
-
+			protected function srvCreateNewUser_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("Учетная запись успешно создана", "Уведомление");
+				updateUsersList();
+				createUserButton.enabled = true;
+				clearCreateUserForm();
+			}
+			
+			
+			protected function srvCreateNewUser_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+				createUserButton.enabled = true;
+				CursorManager.setBusyCursor();
+			}
+			
+			/* Change user data
+			------------------------------------------------------------------------------
+			----------------------------------------------------------------------------*/
+			protected function changeUserDataButton_clickHandler(event:MouseEvent):void
+			{
+				var currentUserID:int = usersListDatagrid.selectedItem.id.value;
+				srvChangeUserData.url = "http://localhost:3000/users/" + currentUserID + ".xml";
+				srvChangeUserData.send();
+				CursorManager.setBusyCursor();
+				changeUserDataButton.enabled = false;
+			}
+			
+			protected function srvChangeUserData_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("Данные успешно изменены", "Уведомление");
+				updateUsersList();
+				changeUserDataButton.enabled = true;
+			}
+			
+			protected function srvChangeUserData_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultDetail);
+				changeUserDataButton.enabled = true;
+				CursorManager.removeBusyCursor();
+			}
+			
+			/* Delete user
+			-------------------------------------------------------------------------------
+			-----------------------------------------------------------------------------*/
+			protected function destroyUserButton_clickHandler(event:MouseEvent):void
+			{
+				srvDestroyUser.url = "http://localhost:3000/users/" + currentUser.id + ".xml";
+				srvDestroyUser.send({_method:"DELETE"});
+				destroyUserButton.enabled = false;
+				CursorManager.setBusyCursor();
+			}
+			
 			protected function srvDestroyUser_resultHandler(event:ResultEvent):void
 			{
+				CursorManager.removeBusyCursor();
 				Alert.show("Учетная запись пользователя успешно удалена","Уведомление");
 				clearUserDataForm();
 				updateUsersList();
 				destroyUserButton.enabled = true;
+				currentState = "DefaultAdminState";
+			}
+			
+			protected function srvDestroyUser_faultHandler(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+				destroyUserButton.enabled = true;
+				CursorManager.removeBusyCursor();
+			}
+			
+			/* Util functions
+			-----------------------------------------------------------------------------
+			----------------------------------------------------------------------------*/
+			
+			protected function clearSearchField(event:MouseEvent):void{
+				searchField.text = "";
 			}
 			
 			protected function clearUserDataForm():void{
@@ -112,30 +171,63 @@
 				telephoneNumberTextInput.text = "";
 				emailTextInput.text = "";
 				loginTextInput.text = "";
+			}
+			
+			protected function clearCreateUserForm():void{
+				userLogin.text = "";
+				userPassword.text = "";
+				userPasswordConfirmation.text = "";
+				userEmail.text = "";
+				userSurName.text = "";
+				userName.text = "";
+				userTelephoneNumber.text = "";
+			}
+
+			protected function userCategoriesList_changeHandler(event:ListEvent):void
+			{
+				var specificUsers:XMLList = usersList.user.(system_role == usersCategoryList.selectedItem.data);
+				if (usersCategoryList.selectedItem.data == "all"){
+					usersListDatagrid.dataProvider = usersList.user;
+				}
+				else{
+					usersListDatagrid.dataProvider = specificUsers;	
+				}
+			}
+
+
+			protected function searchField_changeHandler(event:TextOperationEvent):void
+			{
+				var searchString:String = searchField.text;
+				var requisitiveUsers:XMLList;
 				
-			}
-
-			protected function srvDestroyUser_faultHandler(event:FaultEvent):void
-			{
-				Alert.show(event.fault.faultString);
-				destroyUserButton.enabled = true;
-			}
-
-
-			protected function destroyUserButton_clickHandler(event:MouseEvent):void
-			{
-				srvDestroyUser.url = "http://localhost:3000/users/" + currentUser.id.value + ".xml";
-				srvDestroyUser.send({_method:"DELETE"});
-				destroyUserButton.enabled = false;
+				if (searchString !== ""){
+					requisitiveUsers = usersList.user.(last_name == searchField.text);
+					usersListDatagrid.dataProvider = requisitiveUsers;
+				}
+				else{
+					usersListDatagrid.dataProvider = usersList.user;
+				}
 			}
 
 		]]>
 	</fx:Script>
+	<s:states>
+		<s:State name="DefaultAdminState"/>
+		<s:State name="AdminStateWithChangeUserDataPanel"/>
+	</s:states>
+	<s:transitions>
+		<s:Transition fromState="DefaultAdminState" toState="AdminStateWithChangeUserDataPanel">
+			<s:Sequence targets="{[changeUserDataPanel]}">
+				<s:Wipe direction="down" duration="1000" />
+			</s:Sequence>
+		</s:Transition>
+	</s:transitions>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<mx:HTTPService id="srvGetUsersList"
 						url="http://localhost:3000/users.xml"
 						method="GET"
+						resultFormat="e4x"
 						result="srvGetUsersList_resultHandler(event)"
 						fault="srvGetUsersList_faultHandler(event)" />
 		<s:HTTPService id="srvChangeUserData"
@@ -149,6 +241,7 @@
 					<name>{nameTextInput.text}</name>
 					<last_name>{surNameTextInput.text}</last_name>
 					<telephone_number>{telephoneNumberTextInput.text}</telephone_number>
+					<system_role>{userCategoriesComboBox.selectedItem}</system_role>
 				</user>
 			</s:request>
 		</s:HTTPService>
@@ -165,7 +258,7 @@
 					<name>{userName.text}</name>
 					<last_name>{userSurName.text}</last_name>
 					<telephone_number>{userTelephoneNumber.text}</telephone_number>
-					<system_role>{userCategoriesComboBox.selectedIndex}</system_role>
+					<system_role>{userCategoriesComboBox.selectedItem.data}</system_role>
 					<password>{userPassword.text}</password>
 					<password_confirmation>{userPasswordConfirmation.text}</password_confirmation>
 				</user>
@@ -184,7 +277,7 @@
 				<mx:Form>
 					<mx:FormItem label="Категория пользователя:">
 						<mx:ComboBox id="userCategoriesComboBox"
-									 dataProvider="{userCategories}" />
+									 dataProvider="{categories}"/>
 					</mx:FormItem>
 					<mx:FormItem label="Имя пользователя: ">
 						<s:TextInput id="userName"/>
@@ -202,10 +295,10 @@
 						<s:TextInput id="userLogin"/>
 					</mx:FormItem>
 					<mx:FormItem label="Пароль: ">
-						<s:TextInput id="userPassword" />
+						<s:TextInput id="userPassword" displayAsPassword="true"/>
 					</mx:FormItem>
 					<mx:FormItem label="Повторите пароль: ">
-						<s:TextInput id="userPasswordConfirmation" />
+						<s:TextInput id="userPasswordConfirmation" displayAsPassword="true" />
 					</mx:FormItem>
 					<mx:FormItem>
 						<s:Button label="Создать" 
@@ -229,33 +322,50 @@
 							<s:VGroup width="100%">
 								<s:TextInput id="searchField"
 											 width="100%" 
-											 click="clearSearchField(event)"/>
+											 click="clearSearchField(event)"
+											 change="searchField_changeHandler(event)"/>
 								<mx:Label text='&quot;Например: Орлов Игорь&quot; ' 
 										 fontSize="10" />
 							</s:VGroup>
 						</s:HGroup>
 						<s:HGroup width="100%"
 								  verticalAlign="middle">
-							<s:Label text="Категория пользователя:" />
+							<s:Label text="Пользователи категории:" />
 							<mx:ComboBox id="usersCategoryList"
-										 dataProvider="{userCategories}"/>
+										 dataProvider="{userCategories}"
+										 change="userCategoriesList_changeHandler(event)" />
 						</s:HGroup>
 						<mx:DataGrid
 							id="usersListDatagrid"
 							height="100%" width="100%"
 							paddingLeft="10" paddingRight="10" paddingBottom="10"
+							dataProvider="{usersList.user}"
 							click="usersListDatagrid_clickHandler(event)">
 							<mx:columns>
 								<mx:DataGridColumn headerText="Имя" dataField="name"/>
 								<mx:DataGridColumn headerText="Фамилия" dataField="last_name"/>
-								<mx:DataGridColumn headerText="Логин" dataField="login"/>
 								<mx:DataGridColumn headerText="Номер телефона" dataField="telephone_number"/>
+								<mx:DataGridColumn headerText="Тип учетной записи" dataField="system_role" />
+								<mx:DataGridColumn headerText="Логин" dataField="login"/>
 							</mx:columns>
 						</mx:DataGrid>
 					</s:VGroup>
 				</s:Panel>
-				<s:Panel title="Изменить данные пользователя"
-						 width="100%">
+				<s:Panel id="changeUserDataPanel"
+						 title="Изменить данные пользователя"
+						 width="100%" 
+						 includeIn="AdminStateWithChangeUserDataPanel">
+					<s:controlBarContent>
+						<s:HGroup width="100%"
+								  horizontalAlign="center">
+							<s:Button label="Изменить данные пользователя" 
+									  id="changeUserDataButton"
+									  click="changeUserDataButton_clickHandler(event)"/>
+							<s:Button id="destroyUserButton"
+									  label="Удалить пользователя"
+									  click="destroyUserButton_clickHandler(event)"/>
+						</s:HGroup>
+					</s:controlBarContent>
 					<s:VGroup
 						horizontalAlign="center"
 						width="100%" height="100%">
@@ -292,16 +402,6 @@
 									<s:TextInput id="passwordConfirmationTextInput"/>
 								</mx:FormItem>
 							</mx:Form>
-						</s:HGroup>
-						<s:HGroup width="100%"
-								  horizontalAlign="center"
-								  paddingBottom="10">
-							<s:Button label="Изменить данные пользователя" 
-									  id="changeUserDataButton"
-									  click="changeUserDataButton_clickHandler(event)"/>
-							<s:Button id="destroyUserButton"
-									  label="Удалить пользователя"
-									  click="destroyUserButton_clickHandler(event)"/>
 						</s:HGroup>
 					</s:VGroup>
 				</s:Panel>
