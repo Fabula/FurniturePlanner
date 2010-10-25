@@ -4,7 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:components="components.*"
 		 width="100%" height="100%"
-		 currentState="userState">
+		 currentState="userState" xmlns:Views="components.Views.*">
 	<fx:Metadata>
 		[Event(name = "logout", type = "events.LogoutEvent")]
 	</fx:Metadata>
@@ -100,5 +100,5 @@
 		</s:Group>
 	</s:Scroller>
 	<components:managerWindow includeIn="managerState" />
-	<components:adminWindow includeIn="adminState" />
+	<Views:adminWindow includeIn="adminState" />
 </s:Panel>
