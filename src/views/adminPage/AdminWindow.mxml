@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:adminPage="views.adminPage.*"
+		  currentState="DefaultAdminState"
+		  horizontalCenter="0" verticalCenter="0"
+		  width="100%" height="100%"
+		  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10" >
+	<s:states>
+		<s:State name="DefaultAdminState"/>
+		<s:State name="AdminStateWithChangeUserDataPanel"/>
+	</s:states>
+	<s:transitions>
+		<s:Transition fromState="DefaultAdminState" toState="AdminStateWithChangeUserDataPanel">
+			<s:Sequence targets="{[changeUserDataPanel]}">
+				<s:Wipe direction="down" duration="1000" />
+			</s:Sequence>
+		</s:Transition>
+	</s:transitions>
+<s:Scroller width="100%" height="100%">
+	<s:Group width="100%" height="100%">
+		<s:HGroup width="100%" height="100%">
+			<adminPage:CreateNewUser title="Добавить нового пользователя" 
+									  width="350" />
+
+			<s:VGroup width="100%" height="100%"
+					  minWidth="570">
+				<adminPage:AllUsersPanel />
+				<adminPage:ChangeUserAccountPanel id="changeUserDataPanel"
+												  includeIn="AdminStateWithChangeUserDataPanel" />
+			</s:VGroup>
+		</s:HGroup>
+	</s:Group>
+</s:Scroller>
+</s:VGroup>

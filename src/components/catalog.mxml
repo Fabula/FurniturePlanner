@@ -15,28 +15,19 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<mx:Accordion width="100%">
-		<s:NavigatorContent label="Кухни">
-			<components:searchForm />
-		</s:NavigatorContent>
-		<s:NavigatorContent label="Бытовая техника">
-			<components:searchForm />
-		</s:NavigatorContent>
-		<s:NavigatorContent label="Гостиные">
-			<components:searchForm />
-		</s:NavigatorContent>
-		<s:NavigatorContent label="Спальни">
-			<components:searchForm />
-		</s:NavigatorContent>
-		<s:NavigatorContent label="Кабинеты">
-			<components:searchForm />
-		</s:NavigatorContent>
-		<s:NavigatorContent label="Детские">
-			<components:searchForm />
-		</s:NavigatorContent>
-		<s:NavigatorContent label="Столы, стулья">
-			<components:searchForm />
-		</s:NavigatorContent>
 		<s:NavigatorContent label="Мягкая мебель">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Шкафы">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Столы и стулья">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Светильники">
+			<components:searchForm />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Аксессуары">
 			<components:searchForm />
 		</s:NavigatorContent>
 	</mx:Accordion>

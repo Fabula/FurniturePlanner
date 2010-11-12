@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 title="Изменить данные пользователя"
+		 width="100%" >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:controlBarContent>
+		<s:HGroup width="100%"
+				  horizontalAlign="center">
+			<s:Button label="Изменить данные пользователя" 
+					  id="changeUserDataButton" />
+			<s:Button id="destroyUserButton"
+					  label="Удалить пользователя" />
+		</s:HGroup>
+	</s:controlBarContent>
+	<s:VGroup horizontalAlign="center"
+			  width="100%" height="100%">
+		<s:HGroup height="100%">
+			<mx:Form>
+				<mx:FormHeading label="Персональные данные" />
+				<mx:FormItem label="Имя:">
+					<s:TextInput id="nameTextInput"  />
+				</mx:FormItem>
+				<mx:FormItem label="Фамилия:">
+					<s:TextInput id="surNameTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem label="Номер телефона:">
+					<s:TextInput id="telephoneNumberTextInput" />
+				</mx:FormItem>
+				<mx:FormItem label="Электронная почта:">
+					<s:TextInput id="emailTextInput"/>
+				</mx:FormItem>
+			</mx:Form>
+			<mx:Form>
+				<mx:FormHeading label="Логин/пароль" />
+				<mx:FormItem label="Логин:">
+					<s:TextInput id="loginTextInput" enabled="false"/>
+				</mx:FormItem>
+				<mx:FormItem label="Пароль:">
+					<s:TextInput id="passwordTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem label="Повторите пароль:">
+					<s:TextInput id="passwordConfirmationTextInput"/>
+				</mx:FormItem>
+			</mx:Form>
+		</s:HGroup>
+	</s:VGroup>
+</s:Panel>

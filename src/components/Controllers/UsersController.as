@@ -15,7 +15,7 @@ package components.Controllers
 	{
 		private var model:Users;
 		
-		private var srvGetUsersList:HTTPService;
+		private var srvGetUsersList:HTTPService = new HTTPService();
 		private var srvCreateNewUser:HTTPService;
 		private var srvDeleteUser:HTTPService;
 		private var srvChangeUserData:HTTPService;
@@ -28,32 +28,19 @@ package components.Controllers
 		/* Create new user
 		---------------------------------------------------------------------------------------------
 		-------------------------------------------------------------------------------------------*/
-		public function createNewUser(_login:String, _email:String, _name:String, _surName:String, _telephoneNumber:String, _userType:String, _password:String, _passwordConfirm:String):void{
-			// it's looking so awful
-			var newUserData:XML = new XML(
-				"<user>" +
-				"<login>"+ _login + "</login>" +
-				"<email>"+ _email + "</email>" +
-				"<name>" + _name + "</name>" +
-				"<last_name>" + _surName + "</last_name>" +
-				"<telephone_number>" + _telephoneNumber + "</telephone_number>" +
-				"<system_role>" + _userType + "</system_role>" +
-				"<password>" + _password + "</password>" +
-				"<password_confirmation>"+ _passwordConfirm + "</password_confirmation>" +
-				"</user>");
-			
-			
+		public function createNewUser(_newUserData:XML):void{
 			srvCreateNewUser = new HTTPService();
+			srvGetUsersList.showBusyCursor = true;
 			srvCreateNewUser.url = ServerAddress.getServerAddress() + "users.xml";
 			srvCreateNewUser.method = "POST";
 			srvCreateNewUser.contentType = HTTPService.CONTENT_TYPE_XML;
-			srvCreateNewUser.request = newUserData;			
+			srvCreateNewUser.request = _newUserData;			
 			srvCreateNewUser.addEventListener(ResultEvent.RESULT, createUserHTTPResultHandler);
 			srvCreateNewUser.addEventListener(FaultEvent.FAULT, createUserHTTPFaultHandler);
 			srvCreateNewUser.send();
 		}
 		
-		private function createUserHTTPResultHandler(event:ResultEvent):void{
+		private function createUserHTTPResultHandler(ev:ResultEvent):void{
 			Alert.show("Учетная запись пользователя создана", "Уведомление");
 			getUsersList();
 		}
@@ -66,12 +53,12 @@ package components.Controllers
 		-----------------------------------------------------------------------------------------------
 		---------------------------------------------------------------------------------------------*/
 		public function getUsersList():void{
-			srvGetUsersList = new HTTPService();
-			srvGetUsersList.showBusyCursor;
+			//srvGetUsersList = new HTTPService();
+			srvGetUsersList.showBusyCursor = true;
 			srvGetUsersList.url = ServerAddress.getServerAddress() + "users.xml";
 			srvGetUsersList.method = "GET";
 			srvGetUsersList.resultFormat = HTTPService.RESULT_FORMAT_E4X;
-			srvGetUsersList.addEventListener("result", getUsersListHTTPResultHandler);
+			srvGetUsersList.addEventListener(ResultEvent.RESULT, getUsersListHTTPResultHandler);
 			srvGetUsersList.addEventListener("fault", getUsersListFaultHandler);
 			srvGetUsersList.send();
 		}
@@ -89,6 +76,7 @@ package components.Controllers
 		---------------------------------------------------------------------------------------------*/
 		public function deleteUser(userID:String):void{
 			srvDeleteUser = new HTTPService;
+			srvDeleteUser.showBusyCursor = true;
 			srvDeleteUser.url = ServerAddress.getServerAddress() + "users/" + userID + ".xml";
 			srvDeleteUser.method = "POST";
 			srvDeleteUser.addEventListener(ResultEvent.RESULT, deleteUserHTTPResultHandler);

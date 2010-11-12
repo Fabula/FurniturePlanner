@@ -5,14 +5,24 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import components.Models.FurnitureCatalogModel;
+		]]>
+	</fx:Script>
 	<mx:Form>
-		<mx:FormItem label="Поиск:">
+		<mx:FormItem label="Страна-производитель:">
+			<mx:ComboBox dataProvider="{FurnitureCatalogModel.manufacturersCountries}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Производитель:">
+			<mx:ComboBox dataProvider="{FurnitureCatalogModel.manufacturers}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Стиль:">
+			<mx:ComboBox dataProvider="{FurnitureCatalogModel.furnitureStyles}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Цена до ($): ">
 			<s:TextInput />
 		</mx:FormItem>
-		<mx:FormItem label="Фильтр:">
-			<s:ComboBox />
-		</mx:FormItem>
 	</mx:Form>
-	<!--Indian code -->
-	<mx:HRule x="0" y="81" width="300"/>
+	<mx:HRule width="100%"/>
 </s:Group>

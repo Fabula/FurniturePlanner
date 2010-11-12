@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 xmlns:cairngorm="http://ns.adobe.com/cairngorm"
+		 xmlns:views="views.*" 
+		 xmlns:adminPage="views.adminPage.*"
+		 xmlns:managerPage="views.managerPage.*" 
+		 xmlns:designerPage="views.designerPage.*" 
+		 xmlns:userPage="views.userPage.*">
+	<fx:Metadata>
+		[Waypoint(mode="states",name="pages.mainPage")]		
+	</fx:Metadata>
+	<fx:Declarations>
+		<parsley:Configure />
+		<cairngorm:PopUpWrapper id="newProjectPopUp"
+								open="{_mainAppModel.openNewProjectPopUp}"
+								modal="true"
+								center="true">
+			<userPage:CreateNewProjectPanel />
+			<cairngorm:behaviors>
+				<cairngorm:AddPopUpToParsleyContext/>
+			</cairngorm:behaviors>
+		</cairngorm:PopUpWrapper>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import model.PlannerModelLocator;
+			
+			import views.presentationmodel.MainPagePM;
+			
+			[Bindable]
+			[Inject]
+			public var _model:MainPagePM;
+			
+			[Bindable]
+			private var _mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="userPage"/>
+		<s:State name="designerPage"/>
+		<s:State name="managerPage"/>
+		<s:State name="adminPage" />
+	</s:states>
+	<s:controlBarContent>
+		<s:HGroup id="helpBar" 
+				  width="50%">
+			<s:HGroup
+				verticalAlign="middle">
+				<mx:LinkButton label="Помощь дизайнера" 
+							   textDecoration="underline"
+							   includeIn="userPage"
+							   icon = "{_model.helpButtonIcon}"/>
+			</s:HGroup>
+			<s:HGroup verticalAlign="middle">
+				<mx:LinkButton label="Покупка мебели" 
+							   textDecoration="underline"
+							   includeIn="userPage"
+							   icon="{_model.buyButtonIcon}"/>	
+			</s:HGroup>
+		</s:HGroup>
+		<s:HGroup id="sessionControl" 
+				  width="50%" 
+				  horizontalAlign="right"
+				  verticalAlign="middle">
+			<s:HGroup verticalAlign="middle">
+				<mx:LinkButton id="accountButton"
+							   textDecoration="underline"
+							   label = "{_mainAppModel.currentUser.name + ' ' +  _mainAppModel.currentUser.lastName}"
+							   icon="{_model.accountIcon}"/>
+			</s:HGroup>
+			<s:HGroup verticalAlign="middle">
+				<mx:LinkButton label="Выход" 
+							   id="logout" 
+							   click = "_model.logout()"
+							   textDecoration="underline"
+							   icon="{_model.logoutIcon}"/>
+			</s:HGroup>
+		</s:HGroup>
+	</s:controlBarContent>
+	
+	<s:Scroller width="100%" height="100%" 
+				includeIn="designerPage,userPage">
+		<s:VGroup width="100%" height="100%"
+				  gap="10"
+				  paddingTop="5" paddingRight="5" paddingBottom="5" paddingLeft="5">
+			<views:FurnitureCatalog />
+			<views:ToolArea width="100%" height="100%" />
+		</s:VGroup>
+	</s:Scroller>
+	<managerPage:ManagerPage includeIn="managerPage" />
+	<adminPage:AdminWindow includeIn="adminPage" />
+</s:Panel>

@@ -2,129 +2,26 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
-			   xmlns:components="components.*"
-			   width="100%" height="100%"
-			   currentState='LoginState'>
-	<fx:Script>
-		<![CDATA[
-			import components.ToolWindow;
-			import components.UserData;
-			
-			import events.AccountCreateEvent;
-			import events.LoginEvent;
-			import events.LogoutEvent;
-			
-			import mx.controls.Alert;
-			import mx.events.FlexEvent;
-			import mx.events.StateChangeEvent;
-			import mx.rpc.events.FaultEvent;
-			import mx.rpc.events.ResultEvent;
-										
-			protected function loginpanel_clickHandler(event:MouseEvent):void
-			{
-				if (event.target.id == 'RegButton'){
-					currentState = 'RegState';
-				}
-			}
-
-			protected function accountCreateHandler(event:AccountCreateEvent):void
-			{
-				Alert.show("Учетная запись успешно создана ", "Уведомление");
-				login(event.user);
-			}
-
-
-			protected function loginPanel_loginHandler(event:LoginEvent):void
-			{
-				login(event.user);
-			}
-			
-			private function login(user:XML):void
-			{
-				UserData.getInstance().setUserData(user);
-				
-				checkPrivilegies();
-				loginPanel.loginButton.enabled = true;
-				
-				if (mainWindow.userProjects){
-					mainWindow.userProjects.displayUserProjects();	
-				} 
-			}
-			
-			protected function checkPrivilegies():void{
-				var user:XML = UserData.getInstance().getUserData();
-				var system_role:String = user["system-role"];
-				
-				switch(system_role){
-					case "user":
-						currentState = 'MainState';
-						mainWindow.currentState = 'userState';
-						mainWindow.accountButton.label = user.name + " " + user["last-name"];
-						break;
-					case "admin":
-						currentState = 'MainState';
-						mainWindow.currentState = 'adminState';
-						mainWindow.accountButton.label = user.name + " " + user["last-name"];					
-				}
-			}
-			
-			protected function mainWindow_logoutHandler(event:LogoutEvent):void
-			{				
-				if (mainWindow.currentState == "userState"){
-					clearCanvas();
-					clearProjectsList();
-				}
-				mainWindow.accountButton.label = '';
-				clearLoginPanelFields();
-				// dirty
-				currentState = 'LoginState';
-
-			}
-			
-			protected function clearCanvas():void{
-				mainWindow.toolWindow.newProjectClickHandler();
-			}
-			
-			protected function clearProjectsList():void{
-				mainWindow.userProjects.projectsList.dataProvider.removeAll();
-			}
-			
-			protected function clearLoginPanelFields():void{
-				loginPanel.login.text = '';
-				loginPanel.password.text = '';
-			}
-		]]>
-	</fx:Script>
-	<s:states>
-		<s:State name="LoginState"/>
-		<s:State name="MainState"/>
-		<s:State name="RegState"/>
-	</s:states>
-	<s:transitions>
-		<s:Transition fromState="LoginState" toState="RegState">
-			<s:Sequence targets="{[loginPanel, regPanel]}">
-				<s:Fade duration="2000"/>
-			</s:Sequence>
-		</s:Transition> 
-	</s:transitions>
+			   xmlns:parsley="http://www.spicefactory.org/parsley"
+			   xmlns:cairngorm="com.adobe.cairngorm.*"
+			   xmlns:views="views.*"
+			   xmlns:control="control.*"
+			   width="100%" height="100%" 
+			   xmlns:business="business.*">
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<parsley:ContextBuilder>
+			<cairngorm:CairngormNavigationSupport/>
+			<parsley:FlexConfig type="{ FurniturePlannerConfig }"/>
+		</parsley:ContextBuilder>
+		<parsley:Configure />
+		<business:Services id="services"/>
 	</fx:Declarations>
-	<s:VGroup verticalCenter="0" horizontalCenter="0">
-		<components:LoginPanel 
-			id="loginPanel"
-			title = "Вход в систему"  
-			includeIn="LoginState,RegState"
-			click="loginpanel_clickHandler(event)"
-			login="loginPanel_loginHandler(event)"/>
-		<components:RegistrationPanel
-			id="regPanel"
-			includeIn = "RegState"
-			title="Регистрация нового пользователя" 
-			accountCreate="accountCreateHandler(event)"/>
+	<fx:Script>
+		import control.Pages;
+		/* import views.ContentPM; */
+
+	</fx:Script>
+	<s:VGroup width="100%" height="100%">
+		<views:ContentNavigator />
 	</s:VGroup>
-	<components:mainWindow
-		id="mainWindow"
-		includeIn="MainState"
-		logout="mainWindow_logoutHandler(event)"/>
 </s:Application>

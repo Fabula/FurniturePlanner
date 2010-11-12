@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Metadata>
+		[Event(name = "createUserClicked", type = "events.CreateUserClickedEvent")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			
+			import events.CreateUserClickedEvent;
+			
+			[Bindable]
+			public var categories:Array;
+			
+			private function createUserButton_clickHandler(event:MouseEvent):void
+			{				
+			/* 	controller.createNewUser(userLogin.text, userEmail.text, userName.text, userSurName.text, userTelephoneNumber.text,
+					userCategoriesComboBox.selectedItem.data, userPassword.text, userPasswordConfirmation.text); */
+				var newUserData:XML = new XML(
+				"<user>" +
+					"<login>" + userLogin.text + "</login>" +
+					"<email>" + userEmail.text + "</email>" +
+					"<name>" + userName.text + "</name>" +
+					"<last_name>" + userSurName.text + "</last_name>" +
+					"<telephone_number>" + userTelephoneNumber.text + "</telephone_number>" +
+					"<system_role>" + userCategoriesComboBox.selectedItem.data + "</system_role>" +
+					"<password>" + userPassword.text + "</password>" +
+					"<password_confirmation>"+ userPasswordConfirmation.text + "</password_confirmation>" +
+				"</user>");
+				
+				dispatchEvent(new CreateUserClickedEvent(newUserData));
+				clearCreateUserForm();
+			}
+			
+			private function clearCreateUserForm():void{
+				userLogin.text = "";
+				userPassword.text = "";
+				userPasswordConfirmation.text = "";
+				userEmail.text = "";
+				userSurName.text = "";
+				userName.text = "";
+				userTelephoneNumber.text = "";
+			}
+		]]>
+	</fx:Script>
+	<mx:Form>
+		<mx:FormItem label="Категория пользователя:">
+			<mx:ComboBox id="userCategoriesComboBox"
+						 dataProvider="{categories}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Имя пользователя: ">
+			<s:TextInput id="userName"/>
+		</mx:FormItem>
+		<mx:FormItem label="Фамилия пользователя: ">
+			<s:TextInput id="userSurName"/>
+		</mx:FormItem>
+		<mx:FormItem label="Номер телефона: ">
+			<s:TextInput id="userTelephoneNumber" />
+		</mx:FormItem>
+		<mx:FormItem label="Электронная почта: ">
+			<s:TextInput id="userEmail" />		
+		</mx:FormItem>
+		<mx:FormItem label="Логин: ">
+			<s:TextInput id="userLogin"/>
+		</mx:FormItem>
+		<mx:FormItem label="Пароль: ">
+			<s:TextInput id="userPassword" displayAsPassword="true"/>
+		</mx:FormItem>
+		<mx:FormItem label="Повторите пароль: ">
+			<s:TextInput id="userPasswordConfirmation" displayAsPassword="true" />
+		</mx:FormItem>
+		<mx:FormItem>
+			<s:Button label="Создать" 
+					  id="createUserButton"
+					  click="createUserButton_clickHandler(event)" />
+		</mx:FormItem>
+	</mx:Form>
+</s:Panel>
