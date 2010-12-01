@@ -10,13 +10,14 @@
 	<fx:Script>
 		<![CDATA[
 			import views.presentationmodel.LoginPanelPM;
+			
 			[Inject]
 			[Bindable]
-			public var _model:LoginPanelPM;
+			public var pm:LoginPanelPM;
 		]]>
 	</fx:Script>
-	<fx:Binding source="email.text" destination="_model.email" />
-	<fx:Binding source="password.text" destination="_model.password"/>
+	<fx:Binding source="email.text" destination="pm.email" />
+	<fx:Binding source="password.text" destination="pm.password"/>
 	<s:controlBarContent>
 		<s:HGroup width="100%"
 				  horizontalAlign="right">
@@ -24,11 +25,11 @@
 				id="loginButton"  
 				label="Войти"
 				enabled="{email.text &amp;&amp; password.text}"
-				click="_model.authorize()"/>
+				click="pm.authorize()"/>
 			<s:Button 
 				id="RegButton" 
 				label="Регистрация учетной записи"
-				click="_model.navigateToRegWindow()"/>
+				click="pm.navigateToRegWindow()"/>
 		</s:HGroup>
 	</s:controlBarContent>
 	<s:VGroup horizontalAlign="center" verticalAlign="middle"

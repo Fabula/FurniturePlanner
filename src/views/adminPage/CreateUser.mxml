@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 title="Создание уч. записи пользователя">
+	<fx:Declarations>
+		<parsley:Configure />
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import model.PlannerModelLocator;
+			
+			[Bindable]
+			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			
+			[Inject]
+			public var pm:CreateUserPM;
+		]]>
+	</fx:Script>
+	<s:controlBarContent>
+		<s:HGroup width="100%"
+				  horizontalAlign="right">
+			<s:Button label="Создать уч. запись" 
+					  id="createUserButton"
+					  click = "{pm.createUser(userName.text, userSurName.text, 
+					  userTelephoneNumber.text, userEmail.text, 
+					  userPasswordConfirmation.text, userCategoriesComboBox.selectedItem.data)}"/>
+			<s:Button label="Закрыть окно"
+					  click = "{dispatchEvent(new Event(Event.CLOSE))}" />
+		</s:HGroup>
+	</s:controlBarContent>
+	<mx:Form>
+		<mx:FormItem label="Категория пользователя:">
+			<mx:ComboBox id="userCategoriesComboBox"
+						 dataProvider="{mainAppModel.userCategories}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Имя пользователя: ">
+			<s:TextInput id="userName"/>
+		</mx:FormItem>
+		<mx:FormItem label="Фамилия пользователя: ">
+			<s:TextInput id="userSurName"/>
+		</mx:FormItem>
+		<mx:FormItem label="Номер телефона: ">
+			<s:TextInput id="userTelephoneNumber" />
+		</mx:FormItem>
+		<mx:FormItem label="Электронная почта: ">
+			<s:TextInput id="userEmail" />		
+		</mx:FormItem>
+		<mx:FormItem label="Пароль: ">
+			<s:TextInput id="userPassword" 
+						 displayAsPassword="true"/>
+		</mx:FormItem>
+		<mx:FormItem label="Повторите пароль: ">
+			<s:TextInput id="userPasswordConfirmation" 
+						 displayAsPassword="true" />
+		</mx:FormItem>
+	</mx:Form>
+</s:Panel>

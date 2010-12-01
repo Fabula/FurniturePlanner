@@ -4,6 +4,8 @@ package views.presentationmodel
 	
 	import control.Pages;
 	
+	import messages.DestroySessionMessage;
+	
 	import model.Project;
 	
 	public class MainPagePM
@@ -27,12 +29,19 @@ package views.presentationmodel
 		[Embed(source="icons/door_out.png")]
 		[Bindable]
 		public var logoutIcon:Class;
+		
+		[Bindable]
+		public var openCustomerBasket:Boolean = false;
 				
 		[MessageDispatcher]
 		public var dispatcher:Function;
 		
+		[MessageDispatcher]
+		public var sendMessage:Function;
+		
 		public function logout():void{
 			dispatcher(NavigationEvent.createNavigateToEvent(Pages.LOGIN_STATE));
+			sendMessage(new DestroySessionMessage());
 		}
 	}
 }

@@ -2,22 +2,27 @@
 <cairngorm:ServiceLocator xmlns:mx="http://www.adobe.com/2006/mxml"
 						  xmlns:cairngorm="com.adobe.cairngorm.business.*">
 	<mx:RemoteObject id="furnitureModelRO"
-					 source="FurnitureModelsController"
+					 source="FurnitureProductsController"
 					 destination="rubyamf"
 					 showBusyCursor="true">
 		<mx:method name="create" />
+		<mx:method name="index" />
 	</mx:RemoteObject>
 	<mx:RemoteObject id="userRO"
 					 source="UsersController"
 					 destination="rubyamf"
 					 showBusyCursor="true">
 		<mx:method name="create" />
+		<mx:method name="index" />
+		<mx:method name="update" />
+		<mx:method name="destroy" />
 	</mx:RemoteObject>
 	<mx:RemoteObject id ="sessionRO"
 					 source="SessionsController"
 					 destination="rubyamf"
 					 showBusyCursor="true">
 		<mx:method name="create" />
+		<mx:method name="destroy" />
 	</mx:RemoteObject>
 	<mx:RemoteObject id="projectRO"
 					 source="ProjectsController"

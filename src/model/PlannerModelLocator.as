@@ -1,6 +1,10 @@
 package model
 {
+	import business.Room3D;
+	
 	import com.adobe.cairngorm.model.IModelLocator;
+	
+	import flash.net.FileReference;
 	
 	import model.User;
 	
@@ -12,9 +16,48 @@ package model
 		public var currentUser:User;
 		public var currentProject:Project;
 		public var openNewProjectPopUp:Boolean = false;
+		public var openProductLoadFormPopUp:Boolean = false;
+		public var openFurnitureProductDescription:Boolean = false;
 		
-		public var toolAreaWidth:Number;
-		public var toolAreaHeight:Number;
+		public var furnitureProducts:Array = new Array();
+		public var customerBasket:Array = new Array();
+		public var users:Array;
+		
+		public var currentProductFile:FileReference;
+		public var base64ProductFileString:String;
+		
+		public var room:Room3D;
+		
+		public var manufacturersCountries:Array = [
+			{label: "Финляндия", data: "finland"},
+			{label: "Италия", data: "italy"},
+			{label: "Россия", data: "russia"}
+		];
+		
+		public var furnitureStyles:Array = [
+			{label: "Современный", data: "modern"},
+			{label: "Классический", data: "classic"}
+		];
+		
+		public var furnitureCategories:Array = [
+			{label: "Столы и стулья", data: "chairs_and_tables"},
+			{label: "Мягкая мебель", data: "sofa"},
+			{label: "Шкафы", data: "cupboards"}
+		];
+		
+		public var userCategories:Array = [
+			{label: "клиент", data: "user"},
+			{label: "дизайнер", data: "designer"},
+			{label: "менеджер", data: "manager"}
+		];
+		
+		public var allUserCategories:Array = [
+			{label: "все", data: "all"},
+			{label: "клиент", data: "user"},
+			{label: "дизайнер", data: "designer"},
+			{label: "менеджер", data: "manager"},
+			{label: "администратор", data: "admin"}
+		];
 		
 		private static var plannerModelLocator:PlannerModelLocator;
 		

@@ -2,14 +2,16 @@
 <Objects 
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
 	xmlns="http://www.spicefactory.org/parsley"
+	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:spicefactory="http://www.spicefactory.org/parsley"  
 	xmlns:views="views.*" 
 	xmlns:command="command.*" 
-	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:business="business.*" 
 	xmlns:presentationmodel="views.presentationmodel.*"
 	xmlns:model="model.*" 
-	xmlns:userPage="views.userPage.*"> 
+	xmlns:userPage="views.userPage.*" 
+	xmlns:designerPage="views.designerPage.*" 
+	xmlns:adminPage="views.adminPage.*"> 
 	<fx:Declarations>
 		<!--views-->
 		<views:RegistrationPanel />
@@ -18,31 +20,48 @@
 		<presentationmodel:RegistrationPM />
 		<presentationmodel:ToolAreaPM />
 		<presentationmodel:MainPagePM />
+		<designerPage:CreateFurnitureProductPM />
+		<presentationmodel:FurnitureProductDescriptionPM  />
+		<adminPage:ChangeUserAccountPanelPM />
+		<adminPage:CreateUserPM />
+		<adminPage:AllUsersPanelPM />
 		
-		<userPage:CreateNewProjectPanelPM />
+		<userPage:CreateProjectPanelPM />
+		<userPage:CustomerOrderItemsPM />
 		<business:MainWindowDelegate />
 		<business:RoomDelegate />
 		<command:CreateUserCommand />
 		<command:CreateProjectCommand />
 		<!--models-->
 		<!--commands-->
-		<spicefactory:DynamicCommand type="{CreateUserCommand}" />
+		<spicefactory:DynamicCommand type="{CreateUserCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{UpdateUserCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{DeleteUserCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{ShowAllUsersCommand}" />
 		<spicefactory:DynamicCommand type="{NavigateToMainWindow}" />
-		<spicefactory:DynamicCommand type="{CreateSessionCommand}" />
+		<spicefactory:DynamicCommand type="{CreateSessionCommand}" stateful="true" />
 		<spicefactory:DynamicCommand type="{CreateProjectCommand}" />
+		<spicefactory:DynamicCommand type="{BrowseFileCommand}" />
+		<spicefactory:DynamicCommand type="{CreateFurnitureProductCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{LoadFurnitureProducts}" stateful="true" />
+		<spicefactory:DynamicCommand type="{DestroySessionCommand}" />
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
-			import command.CreateUserCommand;
-			import command.CreateSessionCommand;
-			import command.CreateProjectCommand;
-			import command.NavigateToMainWindow;
+			import command.*;
+			
 			import business.MainWindowDelegate;
 			import business.RoomDelegate;
+			import business.FurnitureProductView;
 			import views.presentationmodel.ToolAreaPM;
 			import views.presentationmodel.RegistrationPM;
 			import views.presentationmodel.MainPagePM;
-			import views.userPage.CreateNewProjectPanelPM;
+			import views.designerPage.CreateFurnitureProductPM;
+			import views.userPage.CreateProjectPanelPM;
+			import views.userPage.CustomerOrderItemsPM;
+			import views.presentationmodel.FurnitureProductDescriptionPM;
+			import views.adminPage.ChangeUserAccountPanelPM;
+			import views.adminPage.AllUsersPanelPM;
 		]]>
 	</fx:Script>
 </Objects>

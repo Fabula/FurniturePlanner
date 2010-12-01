@@ -2,6 +2,8 @@ package business
 {
 	import business.Room3D;
 	
+	import messages.CreateRoomMessage;
+	
 	[Bindable]
 	public class RoomDelegate
 	{		
@@ -9,7 +11,7 @@ package business
 		public var sendRoomToView:Function;
 		
 		public function createRoom(width:int, height:int, length:int):void{
-			sendRoomToView(new Room3D(width, height, length));
+			sendRoomToView(new CreateRoomMessage(width, height, length));
 		}
 	}
 }

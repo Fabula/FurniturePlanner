@@ -23,5 +23,10 @@ package business
 			var call:Object = _sessionRO.create.send({email: _email, password: _password});
 			call.addResponder(_responder);
 		}
+		
+		public function destroySession():void{
+			var call:Object = _sessionRO.destroy();
+			call.addResponder(_responder);
+		}
 	}
 }

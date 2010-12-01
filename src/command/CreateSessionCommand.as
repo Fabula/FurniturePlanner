@@ -3,8 +3,13 @@ package command
 	import business.MainWindowDelegate;
 	import business.SessionDelegate;
 	
-	import messages.GetSession;
 	import errorMessages.ErrorMessageCenter;
+	
+	import messages.GetFurnitureProducts;
+	import messages.GetMainWindow;
+	import messages.GetSession;
+	import messages.ShowAllUsersMessage;
+	
 	import model.PlannerModelLocator;
 	import model.User;
 	
@@ -17,9 +22,8 @@ package command
 
 	public class CreateSessionCommand implements IResponder
 	{
-		[Bindable]
-		[Inject]
-		public var windowDelegate:MainWindowDelegate;
+		[MessageDispatcher]
+		public var dispatcher:Function;
 		
 		public function execute(userData:GetSession):void{
 			var delegate:SessionDelegate = new SessionDelegate(this);
@@ -28,10 +32,24 @@ package command
 		
 		public function result(event:Object):void{
 			var resultEvent:ResultEvent = ResultEvent(event);
-			var _model:PlannerModelLocator = PlannerModelLocator.getInstance();
-			_model.currentUser = User.fromVO(UserVO(resultEvent.result));
-			windowDelegate.navigateToMainWindow(_model.currentUser.systemRole);
-			_model.openNewProjectPopUp = true;
+			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			mainAppModel.currentUser = User.fromVO(UserVO(resultEvent.result));
+			
+			var userRole:String = mainAppModel.currentUser.systemRole;
+
+			// открыть для пользователя окно, которое соответствует его категории
+			dispatcher(new GetMainWindow(userRole));
+			
+			if (userRole == "user" || userRole == "designer"){
+				// загрузить каталог
+				dispatcher(new GetFurnitureProducts());
+			}
+			else{
+				if (userRole == "admin"){
+					// загрузить данные всех пользователей
+					dispatcher(new ShowAllUsersMessage());
+				}
+			}
 		}
 		
 		public function fault(event:Object):void{

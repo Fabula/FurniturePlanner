@@ -14,10 +14,13 @@ package business
 		[MessageDispatcher]
 		public var dispatcher:Function;
 		
+		private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+		
 		public function navigateToMainWindow(userType:String):void{
 			switch(userType){
 				case "user":
 					dispatcher(NavigationEvent.createNavigateToEvent(MainPageDestination.userPage));
+					mainAppModel.openNewProjectPopUp = true;
 					break;
 				case "admin":
 					dispatcher(NavigationEvent.createNavigateToEvent(MainPageDestination.adminPage));

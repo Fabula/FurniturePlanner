@@ -2,18 +2,34 @@
 <s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 title="Изменить данные пользователя"
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 title="Изменить уч. запись пользователя"
 		 width="100%" >
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<parsley:Configure />
 	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import model.User;
+			
+			[Bindable]
+			[Inject]
+			public var pm:ChangeUserAccountPanelPM;
+			
+			[Bindable]
+			public var selectedUser:User;
+		]]>
+	</fx:Script>
+	
 	<s:controlBarContent>
 		<s:HGroup width="100%"
-				  horizontalAlign="center">
+				  horizontalAlign="right">
 			<s:Button label="Изменить данные пользователя" 
-					  id="changeUserDataButton" />
-			<s:Button id="destroyUserButton"
-					  label="Удалить пользователя" />
+					  id="changeUserDataButton"
+					  click = "{pm.changeUserAccount(selectedUser.id, nameTextInput.text, surNameTextInput.text,
+					  								 telephoneNumberTextInput.text, emailTextInput.text, null, selectedUser.systemRole)}"/>
+			<s:Button label="Закрыть окно" 
+					  click="{dispatchEvent(new Event(Event.CLOSE))}" />
 		</s:HGroup>
 	</s:controlBarContent>
 	<s:VGroup horizontalAlign="center"
@@ -22,23 +38,20 @@
 			<mx:Form>
 				<mx:FormHeading label="Персональные данные" />
 				<mx:FormItem label="Имя:">
-					<s:TextInput id="nameTextInput"  />
+					<s:TextInput id="nameTextInput" text="{selectedUser.name}"  />
 				</mx:FormItem>
 				<mx:FormItem label="Фамилия:">
-					<s:TextInput id="surNameTextInput"/>
+					<s:TextInput id="surNameTextInput" text="{selectedUser.lastName}" />
 				</mx:FormItem>
 				<mx:FormItem label="Номер телефона:">
-					<s:TextInput id="telephoneNumberTextInput" />
+					<s:TextInput id="telephoneNumberTextInput" text="{selectedUser.telephoneNumber}" />
 				</mx:FormItem>
 				<mx:FormItem label="Электронная почта:">
-					<s:TextInput id="emailTextInput"/>
+					<s:TextInput id="emailTextInput" text="{selectedUser.email}" />
 				</mx:FormItem>
 			</mx:Form>
 			<mx:Form>
-				<mx:FormHeading label="Логин/пароль" />
-				<mx:FormItem label="Логин:">
-					<s:TextInput id="loginTextInput" enabled="false"/>
-				</mx:FormItem>
+				<mx:FormHeading label="Задать новый пароль" />
 				<mx:FormItem label="Пароль:">
 					<s:TextInput id="passwordTextInput"/>
 				</mx:FormItem>

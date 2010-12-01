@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 title="Загрузка нового предмета мебели">
+	<fx:Declarations>
+		<parsley:Configure />
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import model.PlannerModelLocator;
+			
+			[Bindable]
+			[Inject]
+			public var pm:CreateFurnitureProductPM;
+			
+			[Bindable]
+			private var _model:PlannerModelLocator = PlannerModelLocator.getInstance();
+		]]>
+	</fx:Script>
+	<s:controlBarContent>
+		<s:HGroup width="100%" 
+				  horizontalAlign="right">
+			<s:Button id="uploadModel" 
+					  label="Загрузить на сервер"
+					  click="pm.uploadModel(manufacturerName.text, manufacturerCountry.selectedItem.label,
+					  						furnitureStyle.selectedItem.label, furnitureCategory.selectedItem.label, Number(price.text))"
+					  enabled="{manufacturerName.text &amp;&amp; price.text &amp;&amp; modelFileName.text}"/> 
+			<s:Button id="cancelUpload"
+					  label="Закрыть" 
+					  click="dispatchEvent(new Event(Event.CLOSE))"/>
+		</s:HGroup>
+	</s:controlBarContent>
+	<mx:Form>
+		<mx:FormItem label="Производитель:">
+			<mx:TextInput id="manufacturerName" />
+		</mx:FormItem>
+		<mx:FormItem label="Страна-производитель:">
+			<mx:ComboBox id="manufacturerCountry" 
+						 dataProvider="{_model.manufacturersCountries}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Стиль: ">
+			<mx:ComboBox id="furnitureStyle" 
+						 dataProvider="{_model.furnitureStyles}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Категория предмета мебели:">
+			<mx:ComboBox id="furnitureCategory"
+						 dataProvider="{_model.furnitureCategories}" />
+		</mx:FormItem>
+		<mx:FormItem label="Цена: (евро)">
+			<mx:TextInput id="price" />
+		</mx:FormItem>
+		<mx:FormItem label="Файл модели: ">
+			<mx:TextInput id="modelFileName" 
+						  text="{_model.currentProductFile.name}"
+						  enabled="false"/>
+		</mx:FormItem>
+		<mx:FormItem>
+			<mx:Button id="getFileOfModel"
+					   label="Обзор..."
+					   click="pm.get3DModel()"/>
+		</mx:FormItem>
+	</mx:Form>
+</s:Panel>

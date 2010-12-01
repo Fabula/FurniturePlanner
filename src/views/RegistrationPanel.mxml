@@ -78,8 +78,6 @@
 				enabled="{ (validatorGroup.isValid) &amp;&amp; (pm.passwordsMatch) }"/>
 			<s:Button label="Назад"
 					  click = "pm.navigateToLoginWindow(event)"/>
-			<s:Button label="Вход в систему"
-					  click = "pm.navigateToMainWindow(event)" />
 		</s:HGroup>
 	</s:controlBarContent>
 	<s:HGroup width="100%" height="100%"

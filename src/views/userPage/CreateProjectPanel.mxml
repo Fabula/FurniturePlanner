@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 title="Создание нового проекта">
+	<fx:Declarations>
+		<parsley:Configure />
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import views.userPage.CreateProjectPanelPM;
+			
+			[Inject]
+			[Bindable]
+			public var _model:CreateProjectPanelPM;
+		]]>
+	</fx:Script>
+	<s:controlBarContent>
+		<s:HGroup width="100%"
+				  horizontalAlign="right">
+			<s:Button id="createProjectButton"
+					  label="Создать проект"
+					  click ="{_model.createProject(projectNameInput.text, int(roomWidth.text), int(roomHeight.text), int(roomLength.text))}"
+					  enabled = "{projectNameInput.text &amp;&amp; roomHeight.text &amp;&amp; roomWidth.text &amp;&amp; roomLength.text}"/>
+			<s:Button id="closeProjectWizardButton"
+					  click = "dispatchEvent(new Event(Event.CLOSE))"
+					  label="Закрыть окно"/>
+		</s:HGroup>
+	</s:controlBarContent>
+	<s:VGroup horizontalAlign="center">
+		<mx:Form>
+			<mx:FormItem label="Название проекта:">
+				<s:TextInput id="projectNameInput" />
+			</mx:FormItem>
+			<mx:FormItem>
+				<s:Label text="Параметры помещения" />
+			</mx:FormItem>
+			<mx:FormItem label="Высота:">
+				<s:TextInput id="roomHeight" />
+			</mx:FormItem>
+			<mx:FormItem label="Ширина: ">
+				<s:TextInput id="roomWidth" />
+			</mx:FormItem>
+			<mx:FormItem label="Длина: ">
+				<s:TextInput id="roomLength" />
+			</mx:FormItem>
+		</mx:Form>
+	</s:VGroup>
+</s:Panel>

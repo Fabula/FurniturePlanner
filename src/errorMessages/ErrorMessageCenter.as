@@ -28,5 +28,10 @@ package errorMessages
 		
 		public static var errorAccountCreating:String = "Учетная запись с данной электронной почтой уже существует ";
 		public static var projectCreateError:String = "Ошибка при создании проекта";
+		
+		// Сообщения, выдаваемые при успешной и неудачной загрузке продукта
+		public static var loadFurnitureProductSuccessMessage:String = "Предмет мебели успешно загружен";
+		public static var loadFurnitureProductErrorMessage:String = "Во время загрузки предмета мебели произошла ошибка";
+		
 	}
 }

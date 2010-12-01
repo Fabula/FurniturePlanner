@@ -3,55 +3,91 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:parsley="http://www.spicefactory.org/parsley"
-		 title="{mainAppModel.currentProject.projectName}"
-		 resize="resizeHandler(event)">
+		 xmlns:cairngorm="http://ns.adobe.com/cairngorm"
+		 xmlns:designerPage="views.designerPage.*"
+		 title="{mainAppModel.currentProject.projectName}">
 	<fx:Declarations>
 		<parsley:Configure />
+		<cairngorm:PopUpWrapper id="loadModelPopUp"
+								open="{mainAppModel.openProductLoadFormPopUp}"
+								closed="{mainAppModel.openProductLoadFormPopUp = false}"
+								modal="true"
+								center="true">
+			<designerPage:CreateFurnitureProduct />
+			<cairngorm:behaviors>
+				<cairngorm:AddPopUpToParsleyContext/>
+			</cairngorm:behaviors>
+		</cairngorm:PopUpWrapper>
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[						
+			import alternativa.engine3d.primitives.Plane;
+			
 			import business.Room3D;
+			
+			import messages.AddFurnitureProductToRoom;
+			import messages.CreateRoomMessage;
 			
 			import model.PlannerModelLocator;
 			
-			import mx.controls.Alert;
-			import mx.events.FlexEvent;
 			import mx.events.ResizeEvent;
 			
 			import views.presentationmodel.ToolAreaPM;
 			
 			[Bindable]
 			[Inject]
-			public var _model:ToolAreaPM;
+			public var pm:ToolAreaPM;
 			
-			[MessageHandler]
-			public function addRoom(room:Room3D):void{
-				drawArea.addChild(room);
-			}
-			
+			[Bindable]
 			public var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
 			
-
-			private function resizeHandler(event:ResizeEvent):void
-			{
-				mainAppModel.toolAreaWidth = this.width;
-				mainAppModel.toolAreaHeight = this.height;
+			[MessageHandler]
+			public function addRoom(message:CreateRoomMessage):void{
+				mainAppModel.room = new Room3D(message.roomWidth, message.roomHeight, message.roomLength,
+											 this.width, this.height, drawArea);
+				
+				drawArea.addChild(mainAppModel.room);
 			}
-
+			
+			[MessageHandler]
+			public function addFurnitureProduct(message:AddFurnitureProductToRoom):void{
+				mainAppModel.room.addFurnitureProductToRoom(message.product);
+				mainAppModel.openFurnitureProductDescription = false;
+			}
+			
+			private function changeRoomView(event:Event):void{
+				mainAppModel.room.changeView(event.target.selectedIndex);
+			}
 		]]>
 	</fx:Script>
 	<s:controlBarContent>
 		<s:HGroup width="100%" height="100%"
 				  paddingLeft="5" paddingTop="5" paddingBottom="5"
 				  verticalAlign="middle">
-			<mx:LinkButton icon="{_model.newProjectIcon}"
+			<mx:LinkButton icon="{pm.newProjectIcon}"
 						   click="{mainAppModel.openNewProjectPopUp = true}"/>
-			<mx:LinkButton icon="{_model.saveProjectIcon}" />
-			<mx:LinkButton icon="{_model.printProjectIcon}" />
+			<mx:LinkButton icon="{pm.saveProjectIcon}" />
+			<mx:LinkButton icon="{pm.printProjectIcon}" />
+		</s:HGroup>
+		<s:HGroup horizontalAlign="right"
+				  verticalAlign="middle"
+				  height="100%">
+			<s:Button label="Загрузить предмет интерьера"
+					  click = "{mainAppModel.openProductLoadFormPopUp = true}" />
 		</s:HGroup>
 	</s:controlBarContent>
 	<s:Group width="100%" height="100%">
+		<s:ButtonBar x="10" y="10" 
+					 change="changeRoomView(event)" 
+					 selectedIndex="1"
+					 depth="2">
+			<mx:ArrayCollection>
+				<fx:String>2D</fx:String>
+				<fx:String>3D</fx:String>
+			</mx:ArrayCollection>
+		</s:ButtonBar>
 		<s:SpriteVisualElement id="drawArea" 
-							   width="100%" height="100%"/>
+							   width="100%" height="100%"
+							   depth="1" />
 	</s:Group>
 </s:Panel>

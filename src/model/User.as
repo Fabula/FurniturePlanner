@@ -56,6 +56,7 @@ package model
 			userVO.password = this.password;
 			userVO.system_role = this.systemRole;
 			userVO.password_confirmation = this.password;
+			userVO.id = this.id;
 			return userVO;
 		}
 		

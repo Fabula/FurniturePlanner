@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 title="Список предметов мебели"
+		 width="400" height="100%">
+	<fx:Declarations>
+		<parsley:Configure />
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import model.PlannerModelLocator;
+			
+			[Bindable]
+			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			
+			[Bindable]
+			[Inject]
+			public var pm:CustomerOrderItemsPM;
+			
+			public function checkBoxHandler():void{
+				pm.handleCheckBoxSelect();
+			}
+		]]>
+	</fx:Script>
+	<s:controlBarContent>
+		<s:HGroup width="100%"
+				  horizontalAlign="right">
+			<s:Button label="Сделать заказ" />
+			<s:Button label="Закрыть окно" 
+					  click="{dispatchEvent(new Event(Event.CLOSE))}"/>
+		</s:HGroup>
+	</s:controlBarContent>
+	<s:VGroup width="100%" height="100%"
+			  paddingTop="5" paddingRight="5" paddingBottom="5" paddingLeft="5">
+		<mx:DataGrid horizontalGridLines="false" verticalGridLines="false"
+					 borderVisible="false" 
+					 dataProvider="{mainAppModel.customerBasket}"
+					 width="100%">
+			<mx:columns>
+				<mx:DataGridColumn id="customerOrderDatagrid">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:CheckBox selectedField="buy"
+										 change="checkbox1_changeHandler(event)">
+								<fx:Script>
+									<![CDATA[
+										private var totalPrice:int = 0;
+										
+										protected function checkbox1_changeHandler(event:Event):void
+										{
+											data.buy = !data.buy;
+											outerDocument.checkBoxHandler();
+										}
+									]]>
+								</fx:Script>
+							</mx:CheckBox>							
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn headerText="Завод-производитель" 
+								   dataField="manufacturerName"
+								   width="150"/>
+				<mx:DataGridColumn headerText="Страна" dataField="manufacturerCountry"/>
+				<mx:DataGridColumn headerText="Цена" dataField="price"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<s:HGroup width="100%"
+				  horizontalAlign="right">
+			<s:Label text="Общая стоимость: " 
+					 fontSize="16" />
+			<s:Label text="{pm.totalPrice}"
+					 fontSize="16"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:Panel>

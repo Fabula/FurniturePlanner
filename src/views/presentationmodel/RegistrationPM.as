@@ -4,7 +4,6 @@ package views.presentationmodel
 	
 	import com.adobe.cairngorm.navigation.NavigationEvent;
 	
-	import control.EventNames;
 	import control.Pages;
 	
 	import errorMessages.ErrorMessageCenter;
@@ -53,11 +52,8 @@ package views.presentationmodel
 		}
 		
 		public function createUserAccount(event:MouseEvent):void{
-			sendCreateUser(new User(firstName, lastName, telephoneNumber, email, password));
-		}
-		
-		public function navigateToMainWindow(event:MouseEvent):void{
-			dispatcher(new GetMainWindow("user"));
+			var user:User = new User(firstName, lastName, telephoneNumber, email, password);
+			sendCreateUser(user);
 		}
 	}
 }

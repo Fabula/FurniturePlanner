@@ -6,7 +6,12 @@
 				 width="100%" height="150">
 	<s:NavigatorContent label="Столы и стулья" 
 						width="100%" height="100%">
-		<views:SearchPanel />
+		<s:Scroller width="100%" height="100%">
+			<s:VGroup width="100%" height="100%">
+				<views:SearchPanel />
+				<views:ProductsPanel />
+			</s:VGroup>
+		</s:Scroller>
 	</s:NavigatorContent>
 	<s:NavigatorContent label="Мягкая мебель" width="100%" height="100%">
 	</s:NavigatorContent>

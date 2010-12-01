@@ -15,10 +15,21 @@
 	<fx:Declarations>
 		<parsley:Configure />
 		<cairngorm:PopUpWrapper id="newProjectPopUp"
-								open="{_mainAppModel.openNewProjectPopUp}"
+								open="{mainAppModel.openNewProjectPopUp}"
+								closed="{mainAppModel.openNewProjectPopUp = false}"
 								modal="true"
 								center="true">
-			<userPage:CreateNewProjectPanel />
+			<userPage:CreateProjectPanel />
+			<cairngorm:behaviors>
+				<cairngorm:AddPopUpToParsleyContext/>
+			</cairngorm:behaviors>
+		</cairngorm:PopUpWrapper>
+		<cairngorm:PopUpWrapper id="customerBasketPopUp"
+								open="{pm.openCustomerBasket}"
+								closed="{pm.openCustomerBasket = false}"
+								modal="true"
+								center="true">
+			<userPage:CustomerOrderItems />
 			<cairngorm:behaviors>
 				<cairngorm:AddPopUpToParsleyContext/>
 			</cairngorm:behaviors>
@@ -32,10 +43,10 @@
 			
 			[Bindable]
 			[Inject]
-			public var _model:MainPagePM;
+			public var pm:MainPagePM;
 			
 			[Bindable]
-			private var _mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
 		]]>
 	</fx:Script>
 	<s:states>
@@ -52,13 +63,14 @@
 				<mx:LinkButton label="Помощь дизайнера" 
 							   textDecoration="underline"
 							   includeIn="userPage"
-							   icon = "{_model.helpButtonIcon}"/>
+							   icon = "{pm.helpButtonIcon}"/>
 			</s:HGroup>
 			<s:HGroup verticalAlign="middle">
 				<mx:LinkButton label="Покупка мебели" 
+							   click = "{pm.openCustomerBasket = true}"
 							   textDecoration="underline"
 							   includeIn="userPage"
-							   icon="{_model.buyButtonIcon}"/>	
+							   icon="{pm.buyButtonIcon}"/>	
 			</s:HGroup>
 		</s:HGroup>
 		<s:HGroup id="sessionControl" 
@@ -68,15 +80,15 @@
 			<s:HGroup verticalAlign="middle">
 				<mx:LinkButton id="accountButton"
 							   textDecoration="underline"
-							   label = "{_mainAppModel.currentUser.name + ' ' +  _mainAppModel.currentUser.lastName}"
-							   icon="{_model.accountIcon}"/>
+							   label = "{mainAppModel.currentUser.name + ' ' +  mainAppModel.currentUser.lastName}"
+							   icon="{pm.accountIcon}"/>
 			</s:HGroup>
 			<s:HGroup verticalAlign="middle">
 				<mx:LinkButton label="Выход" 
 							   id="logout" 
-							   click = "_model.logout()"
+							   click = "pm.logout()"
 							   textDecoration="underline"
-							   icon="{_model.logoutIcon}"/>
+							   icon="{pm.logoutIcon}"/>
 			</s:HGroup>
 		</s:HGroup>
 	</s:controlBarContent>

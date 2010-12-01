@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 xmlns:cairngorm="http://ns.adobe.com/cairngorm"
+		 width="100%" height="100%"
+		 gap="20"
+		 verticalAlign="middle" xmlns:views="views.*">
+	<fx:Declarations>
+		<parsley:Configure />
+		<cairngorm:PopUpWrapper id="furnitureProductDescriptionWrapper"
+								open="{mainAppModel.openFurnitureProductDescription}"
+								closed="{mainAppModel.openFurnitureProductDescription = false}"
+								modal="true"
+								center="true">
+			<views:FurnitureProductDescription id="furnitureProductDescriptionPopUp" />
+			<cairngorm:behaviors>
+				<cairngorm:AddPopUpToParsleyContext/>
+			</cairngorm:behaviors>
+		</cairngorm:PopUpWrapper>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import business.Preview;
+			import business.Room3D;
+			
+			import events.FurnitureProductSelectEvent;
+			
+			import messages.AddFurnitureProductToView;
+			import messages.CreateProductsPanelMessage;
+			
+			import model.FurnitureProduct;
+			import model.PlannerModelLocator;
+			
+			import spark.core.SpriteVisualElement;
+			
+			[Bindable]
+			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			
+			[MessageHandler]
+			public function createProductsPanel(message:CreateProductsPanelMessage):void{
+				var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+
+				for each(var pr:FurnitureProduct in mainAppModel.furnitureProducts){
+					var preview:Preview = new Preview(this.height, pr);
+					preview.addEventListener(FurnitureProductSelectEvent.FURNITURE_PRODUCT_SELECTED, showFurnitureProductDescription);
+					var wrapper:SpriteVisualElement = new SpriteVisualElement();
+					wrapper.height = this.height;
+					wrapper.width = 150;
+					wrapper.addChild(preview);
+					this.addElement(wrapper);
+				}
+			}
+			
+			[MessageHandler]
+			public function addNewFurnitureProductToView(message:AddFurnitureProductToView):void{
+				var preview:Preview = new Preview(this.height, message.product);
+				preview.addEventListener(FurnitureProductSelectEvent.FURNITURE_PRODUCT_SELECTED, showFurnitureProductDescription);
+				var wrapper:SpriteVisualElement = new SpriteVisualElement();
+				wrapper.height = this.height;
+				wrapper.width = 150;
+				wrapper.addChild(preview);
+				this.addElement(wrapper);
+			}
+			
+			private function showFurnitureProductDescription(event:FurnitureProductSelectEvent):void{
+				mainAppModel.openFurnitureProductDescription = true;
+				furnitureProductDescriptionPopUp.product = event.furnitureProduct;
+				furnitureProductDescriptionPopUp.showFurnitureProductModel();
+			}
+			
+		]]>
+	</fx:Script>
+</s:HGroup>

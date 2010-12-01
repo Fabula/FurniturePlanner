@@ -8,6 +8,7 @@ package command
 	
 	import errorMessages.ErrorMessageCenter;
 	
+	import messages.GetFurnitureProducts;
 	import messages.NewProject;
 	
 	import model.PlannerModelLocator;
@@ -28,7 +29,7 @@ package command
 		[Bindable]
 		[Inject]
 		public var roomDelegate:RoomDelegate;
-		
+
 		public function execute(_message:NewProject):void{
 			var delegate:ProjectDelegate = new ProjectDelegate(this);
 			message = _message;

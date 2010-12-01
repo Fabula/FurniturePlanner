@@ -7,7 +7,10 @@ package command
 	
 	import flash.events.Event;
 	
+	import messages.CloseCreateUserPopUpMessage;
+	import messages.GetFurnitureProducts;
 	import messages.GetMainWindow;
+	import messages.ShowAllUsersMessage;
 	
 	import model.PlannerModelLocator;
 	import model.User;
@@ -23,11 +26,19 @@ package command
 
 	public class CreateUserCommand implements IResponder
 	{
-		[Bindable]
-		[Inject]
-		public var windowDelegate:MainWindowDelegate;
+		private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
 		
-		private var _model:PlannerModelLocator = PlannerModelLocator.getInstance();
+		[MessageDispatcher]
+		public var dispatcher:Function;
+		
+		[MessageDispatcher]
+		public var getProductsDispatcher:Function;
+		
+		[MessageDispatcher]
+		public var getAllUsers:Function;
+		
+		[MessageDispatcher]
+		public var closeCreateUserPopUp:Function;
 			
 		public function execute(user:User):void{
 			var delegate:UserDelegate = new UserDelegate(this);
@@ -40,9 +51,20 @@ package command
 				Alert.show(ErrorMessageCenter.errorAccountCreating, ErrorMessageCenter.errorMessageTitle);
 			}
 			else{
-				_model.currentUser = User.fromVO(UserVO(resultEvent.result));
-				Alert.show(ErrorMessageCenter.successAccountCreating, ErrorMessageCenter.successMessage);
-				windowDelegate.navigateToMainWindow(_model.currentUser.systemRole);
+				if (mainAppModel.currentUser.systemRole == "admin"){
+					// обновить список пользователей
+					closeCreateUserPopUp(new CloseCreateUserPopUpMessage());
+					getAllUsers(new ShowAllUsersMessage());
+				}
+				else{
+					// устанавливаем текущего пользователя
+					mainAppModel.currentUser = User.fromVO(UserVO(resultEvent.result));
+					Alert.show(ErrorMessageCenter.successAccountCreating, ErrorMessageCenter.successMessage);
+					// открываем соответствующее окно
+					dispatcher(new GetMainWindow(mainAppModel.currentUser.systemRole));
+					// загружаем каталог
+					getProductsDispatcher(new GetFurnitureProducts());
+				}
 			}
 		}
 		

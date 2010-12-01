@@ -14,6 +14,9 @@ package views.presentationmodel
 		
 		[Embed(source="icons/printer.png")] 
 		public var printProjectIcon:Class; 
-				
+		
+		public function loadFurnitureProduct():void{
+			// отправить событие, которое откроет pop-up окно
+		}		
 	}
 }
