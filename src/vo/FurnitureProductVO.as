@@ -4,6 +4,7 @@ package vo
 	[Bindable]
 	public class FurnitureProductVO
 	{
+		public var id:int; 
 		public var manufacturer_name:String;
 		public var manufacturer_country:String;
 		public var style_name:String;

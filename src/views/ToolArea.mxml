@@ -23,7 +23,7 @@
 		<![CDATA[						
 			import alternativa.engine3d.primitives.Plane;
 			
-			import business.Room3D;
+			import business.room.Room3D;
 			
 			import messages.AddFurnitureProductToRoom;
 			import messages.CreateRoomMessage;

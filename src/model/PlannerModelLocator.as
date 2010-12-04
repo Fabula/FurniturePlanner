@@ -1,6 +1,6 @@
 package model
 {
-	import business.Room3D;
+	import business.room.Room3D;
 	
 	import com.adobe.cairngorm.model.IModelLocator;
 	
@@ -22,6 +22,7 @@ package model
 		public var furnitureProducts:Array = new Array();
 		public var customerBasket:Array = new Array();
 		public var users:Array;
+		public var orders:Array = new Array();
 		
 		public var currentProductFile:FileReference;
 		public var base64ProductFileString:String;

@@ -1,6 +1,6 @@
 package business
 {
-	import business.Room3D;
+	import business.room.Room3D;
 	
 	import messages.CreateRoomMessage;
 	

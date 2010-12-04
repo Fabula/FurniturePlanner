@@ -1,4 +1,4 @@
-package business {
+package business.room {
 	
 	import alternativa.engine3d.controllers.SimpleObjectController;
 	import alternativa.engine3d.core.Camera3D;
@@ -28,6 +28,7 @@ package business {
 		private var cameraController:SimpleObjectController;
 		private var camera:Camera3D;
 		private var box:Box;
+		private var basketController:BasketController;
 		
 		// источник событий для контроллера камеры (в нашем случае это drawAreaSprite)
 		private var eventSource:InteractiveObject;
@@ -60,6 +61,8 @@ package business {
 			eventSource = _eventSource;
 			this.parentWidth = parentWidth - 2;
 			this.parentHeight = parentHeight - 75;
+			
+			basketController = new BasketController();
 		}
 		
 		private function MainBuild(ev:Event):void{
@@ -131,18 +134,15 @@ package business {
 		
 		public function addFurnitureProductToRoom(product:FurnitureProduct):void{
 			furnitureProductMesh = product.modelMesh.clone() as Mesh;
-			
-			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
-			
-			mainAppModel.customerBasket.push(BasketItem.toBasketItem(product));
+		
+			basketController.placeFurnitureProductToBasket(product);
 			
 			// установка в угол комнаты
 			furnitureProductMesh.x = roomWidth;
 			furnitureProductMesh.y = 0;
 			furnitureProductMesh.z = -roomHeight;
-			
-			// масштабирование
 			furnitureProductMesh.scaleX = furnitureProductMesh.scaleY = furnitureProductMesh.scaleZ = 0.03;
+			
 			furnitureProductMesh.addEventListener(MouseEvent3D.MOUSE_OVER, selectFurnitureProduct);
 			furnitureProductMesh.addEventListener(MouseEvent3D.MOUSE_OUT, deselectFurnitureProduct);
 			furnitureProductMesh.addEventListener(MouseEvent3D.MOUSE_DOWN, translateFurnitureProduct);

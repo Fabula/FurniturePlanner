@@ -3,8 +3,7 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:parsley="http://www.spicefactory.org/parsley"
-		 title="Список предметов мебели"
-		 width="400" height="100%">
+		 title="Список предметов мебели">
 	<fx:Declarations>
 		<parsley:Configure />
 	</fx:Declarations>
@@ -27,7 +26,8 @@
 	<s:controlBarContent>
 		<s:HGroup width="100%"
 				  horizontalAlign="right">
-			<s:Button label="Сделать заказ" />
+			<s:Button label="Сделать заказ" 
+					  click = "{pm.createOrder()}" />
 			<s:Button label="Закрыть окно" 
 					  click="{dispatchEvent(new Event(Event.CLOSE))}"/>
 		</s:HGroup>
@@ -39,16 +39,15 @@
 					 dataProvider="{mainAppModel.customerBasket}"
 					 width="100%">
 			<mx:columns>
-				<mx:DataGridColumn id="customerOrderDatagrid">
+				<mx:DataGridColumn id="customerOrderDatagrid" width="15">
 					<mx:itemRenderer>
 						<fx:Component>
 							<mx:CheckBox selectedField="buy"
-										 change="checkbox1_changeHandler(event)">
+										 change="changeHandler(event)">
 								<fx:Script>
 									<![CDATA[
-										private var totalPrice:int = 0;
 										
-										protected function checkbox1_changeHandler(event:Event):void
+										private function changeHandler(event:Event):void
 										{
 											data.buy = !data.buy;
 											outerDocument.checkBoxHandler();
@@ -64,6 +63,7 @@
 								   width="150"/>
 				<mx:DataGridColumn headerText="Страна" dataField="manufacturerCountry"/>
 				<mx:DataGridColumn headerText="Цена" dataField="price"/>
+				<mx:DataGridColumn headerText="Количество" dataField="quantity" />
 			</mx:columns>
 		</mx:DataGrid>
 		<s:HGroup width="100%"

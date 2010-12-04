@@ -12,7 +12,7 @@ package views.presentationmodel
 	{
 		[Embed(source="icons/report.png")]
 		[Bindable]
-		public var furnitureListIcon:Class;
+		public var customerOrdersIcon:Class;
 		
 		[Embed(source="icons/help.png")]
 		[Bindable]
@@ -32,6 +32,9 @@ package views.presentationmodel
 		
 		[Bindable]
 		public var openCustomerBasket:Boolean = false;
+		
+		[Bindable]
+		public var openCustomerOrders:Boolean = false;
 				
 		[MessageDispatcher]
 		public var dispatcher:Function;

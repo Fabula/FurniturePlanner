@@ -94,7 +94,8 @@ package business
 				
 			// загрузка текстур
 			var textureLoader:MaterialLoader = new MaterialLoader();
-			textureLoader.load(parser.textureMaterials);	
+			textureLoader.load(parser.textureMaterials);		
+
 				
 			// добавляем в сцену
 			container.addChild(modelMesh);

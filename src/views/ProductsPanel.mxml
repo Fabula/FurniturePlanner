@@ -23,7 +23,7 @@
 	<fx:Script>
 		<![CDATA[
 			import business.Preview;
-			import business.Room3D;
+			import business.room.Room3D;
 			
 			import events.FurnitureProductSelectEvent;
 			

@@ -30,4 +30,10 @@
 					 showBusyCursor="true">
 		<mx:method name="create" />
 	</mx:RemoteObject>
+	<mx:RemoteObject id="orderRO"
+					 source="OrderController"
+					 destination="rubyamf"
+					 showBusyCursor="true">
+		<mx:method name="create" />
+	</mx:RemoteObject>
 </cairngorm:ServiceLocator>

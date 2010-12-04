@@ -1,6 +1,6 @@
 package views.presentationmodel
 {
-	import business.Room3D;
+	import business.room.Room3D;
 	import mx.controls.Alert;
 
 	[Bindable]

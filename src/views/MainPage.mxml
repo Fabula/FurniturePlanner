@@ -34,6 +34,16 @@
 				<cairngorm:AddPopUpToParsleyContext/>
 			</cairngorm:behaviors>
 		</cairngorm:PopUpWrapper>
+		<cairngorm:PopUpWrapper id="customerOrdersPopUp"
+								open="{pm.openCustomerOrders}"
+								closed="{pm.openCustomerOrders = false}"
+								modal="true"
+								center="true">
+			<userPage:CustomerOrders />
+			<cairngorm:behaviors>
+				<cairngorm:AddPopUpToParsleyContext/>
+			</cairngorm:behaviors>
+		</cairngorm:PopUpWrapper>
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
@@ -57,20 +67,27 @@
 	</s:states>
 	<s:controlBarContent>
 		<s:HGroup id="helpBar" 
-				  width="50%">
-			<s:HGroup
-				verticalAlign="middle">
+				  width="50%"
+				  verticalAlign="middle">
+			<s:HGroup>
 				<mx:LinkButton label="Помощь дизайнера" 
 							   textDecoration="underline"
 							   includeIn="userPage"
 							   icon = "{pm.helpButtonIcon}"/>
 			</s:HGroup>
-			<s:HGroup verticalAlign="middle">
+			<s:HGroup>
 				<mx:LinkButton label="Покупка мебели" 
 							   click = "{pm.openCustomerBasket = true}"
 							   textDecoration="underline"
 							   includeIn="userPage"
 							   icon="{pm.buyButtonIcon}"/>	
+			</s:HGroup>
+			<s:HGroup>
+				<mx:LinkButton label="Мои заказы"
+							   click = "pm.openCustomerOrders = true"
+							   textDecoration="underline"
+							   includeIn="userPage"
+							   icon="{pm.customerOrdersIcon}"/>
 			</s:HGroup>
 		</s:HGroup>
 		<s:HGroup id="sessionControl" 

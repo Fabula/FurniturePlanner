@@ -45,6 +45,7 @@
 		<spicefactory:DynamicCommand type="{CreateFurnitureProductCommand}" stateful="true" />
 		<spicefactory:DynamicCommand type="{LoadFurnitureProducts}" stateful="true" />
 		<spicefactory:DynamicCommand type="{DestroySessionCommand}" />
+		<spicefactory:DynamicCommand type="{CreateOrderCommand}"  />
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
