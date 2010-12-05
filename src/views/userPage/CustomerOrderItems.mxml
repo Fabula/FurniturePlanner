@@ -3,7 +3,8 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:parsley="http://www.spicefactory.org/parsley"
-		 title="Список предметов мебели">
+		 title="Список предметов мебели"
+		 width="700">
 	<fx:Declarations>
 		<parsley:Configure />
 	</fx:Declarations>
@@ -57,6 +58,10 @@
 							</mx:CheckBox>							
 						</fx:Component>
 					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn headerText="Описание"
+								   dataField="description" 
+								   wordWrap="true">
 				</mx:DataGridColumn>
 				<mx:DataGridColumn headerText="Завод-производитель" 
 								   dataField="manufacturerName"

@@ -11,5 +11,6 @@ package vo
 		public var furniture_category_name:String;
 		public var price:Number;
 		public var model:String;
+		public var description:String;
 	}
 }

@@ -8,7 +8,8 @@ package vo
 		public var id:int;
 		[Transient]
 		public var orderItems:Array;
-		public var order_status:String;
+		[Transient]
+		public var status:String;
 		public var user_id:int;
 		[Transient]
 		public var created_at:Date;

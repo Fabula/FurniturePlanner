@@ -7,6 +7,8 @@ package model
 		public var productID:int;
 		public var quantity:int;
 		
+		public var furnitureProduct:FurnitureProduct;
+		
 		public function OrderItem(productID:int, quantity:int)
 		{
 			this.productID = productID;

@@ -36,7 +36,6 @@
 		</cairngorm:PopUpWrapper>
 		<cairngorm:PopUpWrapper id="customerOrdersPopUp"
 								open="{pm.openCustomerOrders}"
-								reuse="true"
 								closed="{pm.openCustomerOrders = false}"
 								modal="true"
 								center="true">

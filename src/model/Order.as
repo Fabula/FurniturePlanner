@@ -7,7 +7,7 @@ package model
 	{
 		public var orderID:int;
 		public var orderUserID:int;
-		public var orderStatus:String = "new";
+		public var orderStatus:String;
 		public var orderCreatedDate:Date;
 		public var orderItems:Array;
 
@@ -19,7 +19,7 @@ package model
 		public function toVO():OrderVO{
 			var orderVO:OrderVO = new OrderVO();
 			orderVO.orderItems = new Array();
-			orderVO.order_status = this.orderStatus;
+			orderVO.status = this.orderStatus;
 			orderVO.user_id = this.orderUserID;
 				
 			for each (var orderItem:OrderItem in orderItems){
@@ -32,7 +32,7 @@ package model
 		public static function fromVO(orderVO:OrderVO):Order{
 			var order:Order = new Order(orderVO.user_id);
 			order.orderID = orderVO.id;
-			order.orderStatus = orderVO.order_status;
+			order.orderStatus = orderVO.status;
 			order.orderCreatedDate = orderVO.created_at;
 			order.orderItems = new Array();
 			

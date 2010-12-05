@@ -26,7 +26,6 @@ package command
 			var orderVO:OrderVO = OrderVO(resultEvent.result);
 			
 			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
-			
 			mainAppModel.orders.push(Order.fromVO(orderVO)); 
 		}
 		

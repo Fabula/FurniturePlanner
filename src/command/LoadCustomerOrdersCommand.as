@@ -4,8 +4,10 @@ package command
 	
 	import messages.GetCustomerOrdersMessage;
 	
-	import model.PlannerModelLocator;
+	import model.FurnitureProduct;
 	import model.Order;
+	import model.OrderItem;
+	import model.PlannerModelLocator;
 	
 	import mx.rpc.IResponder;
 	import mx.rpc.events.ResultEvent;
@@ -14,15 +16,15 @@ package command
 
 	public class LoadCustomerOrdersCommand implements IResponder
 	{
+		private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+		
 		public function execute(message:GetCustomerOrdersMessage):void{
 			var delegate:OrderDelegate = new OrderDelegate(this);
 			delegate.loadOrders();
 		}
 		
 		public function result(event:Object):void{
-			var resultEvent:ResultEvent = ResultEvent(event);
-			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
-			
+			var resultEvent:ResultEvent = ResultEvent(event);			
 			var orders:Array = resultEvent.result as Array;
 			
 			mainAppModel.orders = new Array();
@@ -31,10 +33,24 @@ package command
 				mainAppModel.orders.push(Order.fromVO(orderVO));
 			}
 			
+			joinFurnitureProducts();
 		}
 		
 		public function fault(event:Object):void{
 			
+		}
+		
+		private function joinFurnitureProducts():void{
+			// hardcode, dont touch, sloooooooow
+			for each (var order:Order in mainAppModel.orders){
+				for each (var orderItem:OrderItem in order.orderItems){
+					for each (var product:FurnitureProduct in mainAppModel.furnitureProducts){
+						if (product.furnitureProductID == orderItem.productID){
+							orderItem.furnitureProduct = product;
+						}
+					}
+				}
+			}
 		}
 	}
 }

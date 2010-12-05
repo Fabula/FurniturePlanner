@@ -25,8 +25,8 @@ package views.designerPage
 		}
 		
 		public function uploadModel(manufacturerName:String, manufacturerCountry:String, furnitureStyle:String,
-									furnitureCategory:String, price:Number):void{
-			var fproduct:FurnitureProduct = new FurnitureProduct(manufacturerName, manufacturerCountry, furnitureStyle, furnitureCategory, price, mainAppModel.base64ProductFileString);
+									furnitureCategory:String, price:Number, description:String):void{
+			var fproduct:FurnitureProduct = new FurnitureProduct(manufacturerName, manufacturerCountry, furnitureStyle, furnitureCategory, price, mainAppModel.base64ProductFileString, description);
 			sendFurnitureProduct(fproduct);
 		}
 	}

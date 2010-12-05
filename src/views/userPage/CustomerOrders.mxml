@@ -45,18 +45,23 @@
 			<mx:columns>
 				<mx:DataGridColumn headerText="Дата создания заказа" dataField="orderCreatedDate"/>
 				<mx:DataGridColumn headerText="Статус заказа" dataField="orderStatus"/>
-				<mx:DataGridColumn headerText="Стоимость заказа" />
-				<mx:DataGridColumn headerText="Менеджер" />
+				<mx:DataGridColumn headerText="Действия">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Button label="Отменить заказ" />
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
 			</mx:columns>
 		</mx:DataGrid>
 		<mx:DataGrid id="orderDetailDatagrid"
 					 width="100%"
 					 dataProvider="{ordersDatagrid.selectedItem.orderItems}">
 			<mx:columns>
-				<mx:DataGridColumn headerText="Описание предмета мебели" dataField="productID" />
-				<mx:DataGridColumn headerText="Производитель" />
+				<mx:DataGridColumn headerText="Описание предмета мебели" dataField="furnitureProduct.description" />
+				<mx:DataGridColumn headerText="Производитель" dataField="furnitureProduct.manufacturerName" />
 				<mx:DataGridColumn headerText="Количество"  dataField="quantity"/>
-				<mx:DataGridColumn headerText="Цена" />
+				<mx:DataGridColumn headerText="Цена" dataField="furnitureProduct.price"/>
 			</mx:columns>
 		</mx:DataGrid>
 	</s:VGroup>
