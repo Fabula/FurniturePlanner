@@ -22,7 +22,7 @@ package model
 		public var furnitureProducts:Array = new Array();
 		public var customerBasket:Array = new Array();
 		public var users:Array;
-		public var orders:Array = new Array();
+		public var orders:Array;
 		
 		public var currentProductFile:FileReference;
 		public var base64ProductFileString:String;

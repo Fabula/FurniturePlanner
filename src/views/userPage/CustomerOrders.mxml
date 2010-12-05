@@ -2,16 +2,32 @@
 <s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 title="Мои заказы">
+		 xmlns:parsley="http://www.spicefactory.org/parsley"
+		 title="Мои заказы"
+		 creationComplete="creationCompleteHandler(event)"
+		 width="900" height="100%">
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<parsley:Configure />
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
+			import messages.GetCustomerOrdersMessage;
+			
 			import model.PlannerModelLocator;
+			
+			import mx.events.FlexEvent;
 			
 			[Bindable]
 			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+
+			[MessageDispatcher]
+			public var dispatcher:Function;
+			
+			private function creationCompleteHandler(event:FlexEvent):void
+			{				
+				dispatcher(new GetCustomerOrdersMessage());
+			}
+
 		]]>
 	</fx:Script>
 	<s:controlBarContent>
@@ -27,7 +43,7 @@
 					 dataProvider="{mainAppModel.orders}"
 					 width="100%">
 			<mx:columns>
-				<mx:DataGridColumn headerText="Дата создания заказа" />
+				<mx:DataGridColumn headerText="Дата создания заказа" dataField="orderCreatedDate"/>
 				<mx:DataGridColumn headerText="Статус заказа" dataField="orderStatus"/>
 				<mx:DataGridColumn headerText="Стоимость заказа" />
 				<mx:DataGridColumn headerText="Менеджер" />

@@ -26,5 +26,11 @@ package business
 			
 			call.addResponder(responder);
 		}
+		
+		public function loadOrders():void{
+			var call:Object = _orderRO.index.send();
+			
+			call.addResponder(responder);
+		}
 	}
 }
