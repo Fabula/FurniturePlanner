@@ -2,6 +2,9 @@ package command
 {
 	import business.OrderDelegate;
 	
+	import errorMessages.ErrorMessageCenter;
+	
+	import messages.CloseCustomerBasketPopUpMessage;
 	import messages.NewOrderMessage;
 	
 	import model.Order;
@@ -16,6 +19,9 @@ package command
 
 	public class CreateOrderCommand implements IResponder
 	{
+		[MessageDispatcher]
+		public var dispatcher:Function;
+		
 		public function execute(message:NewOrderMessage):void{
 			var delegate:OrderDelegate = new OrderDelegate(this);
 			delegate.createOrder(message.order);
@@ -27,10 +33,14 @@ package command
 			
 			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
 			mainAppModel.orders.push(Order.fromVO(orderVO)); 
+			
+			Alert.show(ErrorMessageCenter.successOrderCreated + "\n" + "Номер заказа - " + orderVO.id, ErrorMessageCenter.successMessage);
+			
+			dispatcher(new CloseCustomerBasketPopUpMessage());
 		}
 		
 		public function fault(event:Object):void{
-			
+			Alert.show(ErrorMessageCenter.networkError, ErrorMessageCenter.errorMessageTitle);
 		}
 	}
 }

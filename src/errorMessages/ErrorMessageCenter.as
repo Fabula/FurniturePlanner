@@ -33,5 +33,9 @@ package errorMessages
 		public static var loadFurnitureProductSuccessMessage:String = "Предмет мебели успешно загружен";
 		public static var loadFurnitureProductErrorMessage:String = "Во время загрузки предмета мебели произошла ошибка";
 		
+		// Сообщение, выдаваемое, при неудачном обновлении статуса заказа
+		public static var changeOrderStatusErrorMessage:String = "При изменении статуса заказа произошла ошибка. Попробуйте повторить данную процедуру позже";
+		
+		public static var successOrderCreated:String = "Заказ успешно оформлен";
 	}
 }

@@ -1,19 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		  xmlns:s="library://ns.adobe.com/flex/spark" 
 		  xmlns:mx="library://ns.adobe.com/flex/mx"
-		  verticalCenter="0" horizontalCenter="0"
-		  width="50%">
+		  xmlns:parsley="http://www.spicefactory.org/parsley"
+		  title="Заказы клиентов"
+		  creationComplete="creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import messages.ChangeOrderStatusMessage;
+			import messages.GetAllOrdersMessage;
+			
+			import model.Order;
+			import model.PlannerModelLocator;
+			
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			
+			[Bindable]
+			public var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+						
+			[MessageDispatcher]
+			public var dispatcher:Function;
+
+			private function creationCompleteHandler(event:FlexEvent):void
+			{
+				dispatcher(new GetAllOrdersMessage());
+			}
+			
+			private function chooseActionComboBox_changeHandler(event:ListEvent):void
+			{
+				dispatcher(new ChangeOrderStatusMessage(customersOrdersDatagrid.selectedItem.orderID, chooseActionComboBox.selectedLabel));
+				chooseActionComboBox.selectedIndex = -1;
+			}
+			
+			private function convertDate(item:Object, column:DataGridColumn):String{
+				return item.orderCreatedDate.date + "/" + item.orderCreatedDate.month + "/" + item.orderCreatedDate.fullYear + " " + item.orderCreatedDate.hours + ":" + item.orderCreatedDate.minutes;
+			}
+			
+		]]>
+	</fx:Script>
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<parsley:Configure />
 	</fx:Declarations>
-		<mx:DataGrid width="100%">
-			<mx:columns>
-				<mx:DataGridColumn headerText="Номер заказа" dataField="col1"/>
-				<mx:DataGridColumn headerText="Дата" dataField="col2"/>
-				<mx:DataGridColumn headerText="ФИО клиента" dataField="col3"/>
-			</mx:columns>
-		</mx:DataGrid>
-		<s:List x="158" y="245" 
-				height="77" width="100%" />
-</s:VGroup>
+	<s:Scroller width="100%" height="100%">
+		<s:VGroup width="100%" height="100%"
+				  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10">
+			<s:HGroup verticalAlign="middle">
+				<s:Label text="Изменить статус заказа на:" />
+				<mx:ComboBox id="chooseActionComboBox" 
+							 dataProvider="{mainAppModel.orderStatusActions}" 
+							 prompt="Выберите статус..."
+							 change="chooseActionComboBox_changeHandler(event)" />
+			</s:HGroup>
+			<mx:DataGrid id="customersOrdersDatagrid" 
+						 dataProvider="{mainAppModel.customersOrders}"
+						 width="100%">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Номер заказа" 
+									   width="40"
+									   dataField="orderID" />
+					<mx:DataGridColumn headerText="Дата заказа (день/месяц/год)"
+									   labelFunction="convertDate"/>
+					<mx:DataGridColumn headerText="ФИО клиента"
+									   itemRenderer="views.managerPage.CustomerFullNameRenderer"/>
+					<mx:DataGridColumn headerText="Номер телефона" 
+									   dataField="telephoneNumber"
+									   itemRenderer="views.managerPage.CustomerTelephoneNumberRenderer"/>
+					<mx:DataGridColumn headerText="Статус заказа" 
+									   dataField="orderStatus" />
+				</mx:columns>
+			</mx:DataGrid>
+			<mx:DataGrid id="customerOrderDetailDatagrid"
+						 dataProvider="{customersOrdersDatagrid.selectedItem.orderItems}"
+						 width="100%">
+				<mx:columns>
+					<mx:DataGridColumn headerText="ID" 
+									   width="40"
+									   dataField="productID" />
+					<mx:DataGridColumn headerText="Описание" 
+									   dataField="furnitureProduct.description" />
+					<mx:DataGridColumn headerText="Завод-производитель" 
+									   dataField="furnitureProduct.manufacturerName" />
+					<mx:DataGridColumn headerText="Размеры (мм)" 
+									   dataField="" />
+					<mx:DataGridColumn headerText="Количество (шт.)" 
+									   dataField="quantity" />
+					<mx:DataGridColumn headerText="Цена (евро)" 
+									   dataField="furnitureProduct.price" />
+				</mx:columns>
+			</mx:DataGrid>
+		</s:VGroup>
+	</s:Scroller>
+</s:Panel>

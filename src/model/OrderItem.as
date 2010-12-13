@@ -6,7 +6,6 @@ package model
 	{
 		public var productID:int;
 		public var quantity:int;
-		
 		public var furnitureProduct:FurnitureProduct;
 		
 		public function OrderItem(productID:int, quantity:int)
@@ -25,6 +24,8 @@ package model
 		
 		public static function fromVO(orderItemVO:OrderItemVO):OrderItem{
 			var orderItem:OrderItem = new OrderItem(orderItemVO.furniture_product_id, orderItemVO.quantity);
+			
+			orderItem.furnitureProduct = FurnitureProduct.fromVO(orderItemVO.product);
 			
 			return orderItem;
 		}

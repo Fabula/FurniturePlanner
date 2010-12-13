@@ -1,35 +1,21 @@
 package model
 {
 	import vo.UserVO;
+	import vo.OrderVO;
 
+	[Bindable]
 	public class User
 	{
-		[Bindable]
 		public var id:int
-		
-		[Bindable]
 		public var name:String;
-		
-		[Bindable]
 		public var lastName:String;
-		
-		[Bindable]
 		public var telephoneNumber:String;
-		
-		[Bindable]
 		public var email:String;
-			
-		[Bindable]
 		public var password:String;
-		
-		[Bindable]
 		public var systemRole:String;
-		
-		[Bindable]
 		public var created_at:Date;
-		
-		[Bindable]
 		public var updated_at:Date;
+		public var orders:Array;
 		
 		public function User(name:String, lastName:String, 
 							 telephoneNumber:String, email:String, 
@@ -61,15 +47,22 @@ package model
 		}
 		
 		public static function fromVO(userVO:UserVO):User{
-			return new User(userVO.name, 
-							userVO.last_name, 
-							userVO.telephone_number,
-							userVO.email,
-							userVO.password,
-							userVO.system_role,
-							userVO.created_at,
-							userVO.updated_at,
-							userVO.id);
+			var user:User = new User(userVO.name, 
+									 userVO.last_name, 
+									 userVO.telephone_number,
+									 userVO.email,
+									 userVO.password,
+									 userVO.system_role,
+									 userVO.created_at,
+									 userVO.updated_at,
+									 userVO.id);
+			user.orders = new Array();
+			
+			for each( var orderVO:OrderVO in userVO.orders){
+				user.orders.push(Order.fromVO(orderVO));
+			}
+			
+			return user;
 		}
 	}
 }

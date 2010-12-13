@@ -25,6 +25,8 @@ package command
 				mainAppModel.room.removeListener();
 				mainAppModel.room = null;
 			}
+			
+			mainAppModel.currentUser = null;
 		}
 		
 		public function result(event:Object):void{

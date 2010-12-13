@@ -1,5 +1,6 @@
 package business.room {
 	
+	import alternativa.engine3d.containers.BSPContainer;
 	import alternativa.engine3d.controllers.SimpleObjectController;
 	import alternativa.engine3d.core.Camera3D;
 	import alternativa.engine3d.core.MipMapping;
@@ -7,27 +8,37 @@ package business.room {
 	import alternativa.engine3d.core.Object3D;
 	import alternativa.engine3d.core.Object3DContainer;
 	import alternativa.engine3d.core.View;
+	import alternativa.engine3d.materials.FillMaterial;
 	import alternativa.engine3d.materials.Material;
 	import alternativa.engine3d.materials.TextureMaterial;
 	import alternativa.engine3d.objects.Mesh;
 	import alternativa.engine3d.primitives.Box;
+	
+	import by.flastar.alternativa.felink.Alternativa3dPhysics;
 	
 	import flash.display.BitmapData;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.GlowFilter;
+	import flash.geom.Vector3D;
+	
+	import jiglib.physics.RigidBody;
 	
 	import model.BasketItem;
 	import model.FurnitureProduct;
 	import model.PlannerModelLocator;
+	
 
 	public class Room3D extends Sprite {
 		
 		private var container:Object3DContainer = new Object3DContainer();
+		private var bspContainer:BSPContainer;
+		
 		private var cameraController:SimpleObjectController;
 		private var camera:Camera3D;
-		private var box:Box;
+		private var physics:Alternativa3dPhysics;
+		private var room:Box;
 		private var basketController:BasketController;
 		
 		// источник событий для контроллера камеры (в нашем случае это drawAreaSprite)
@@ -46,12 +57,18 @@ package business.room {
 		private var furnitureProductMesh:Mesh;
 		private var furnitureProductController:SimpleObjectController;
 		
+		// твердые тела
+		private var rigidProduct:RigidBody;
+		private var rgBox:RigidBody;
+		private var ground:RigidBody;
+		
 		private const CAMERA_SPEED:Number = 2;
 		private const CAMERA_DISTANCE:Number = 8;
-
+		
 		public function Room3D(_roomWidth:Number, _roomHeight:Number, _roomLength:Number,
 							   parentWidth:Number,parentHeight:Number, _eventSource:InteractiveObject) 
 		{
+			
 			addEventListener(Event.ADDED_TO_STAGE, MainBuild, false, 0, true);
 			
 			roomWidth = _roomWidth;
@@ -72,21 +89,23 @@ package business.room {
 			addChild(camera.view);
 			
 			container.addChild(camera);
+						
+			physics = new Alternativa3dPhysics(container, 1);
+			
 			initBox();
-			
-			cameraController = new SimpleObjectController(eventSource, camera, CAMERA_SPEED);
-			
+
 			setDefaultCameraSettings();
 
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		private function setDefaultCameraSettings():void{
-			cameraController.lookAtXYZ(box.x, box.y, box.z);
-			cameraController.enable();
+			cameraController = new SimpleObjectController(eventSource, camera, CAMERA_SPEED);
+			cameraController.lookAtXYZ(room.x, room.y, room.z);
 		}
 		
 		private function onEnterFrame(e:Event):void {
+			physics.engine.integrate(0.2);
 			cameraController.update();
 			camera.render();
 			
@@ -127,11 +146,12 @@ package business.room {
 			var cellingTexture:TextureMaterial = new TextureMaterial(cellingBitmap);
 						
 			// Создание комнаты (прямоугольного параллепипеда)
-			box = new Box(roomWidth, roomHeight, roomLength, 1,1,1, true, false, 
+			room = new Box(roomWidth, roomHeight, roomLength, 1,1,1, true, false, 
 				wallTexture, wallTexture, wallTexture, wallTexture, floorTexture, cellingTexture);
-			container.addChild(box);
+
+			physics.createRigidRoom(room, roomWidth, roomLength, roomHeight);
 		}
-		
+
 		public function addFurnitureProductToRoom(product:FurnitureProduct):void{
 			furnitureProductMesh = product.modelMesh.clone() as Mesh;
 		
@@ -143,32 +163,35 @@ package business.room {
 			furnitureProductMesh.z = -roomHeight;
 			furnitureProductMesh.scaleX = furnitureProductMesh.scaleY = furnitureProductMesh.scaleZ = 0.03;
 			
-			furnitureProductMesh.addEventListener(MouseEvent3D.MOUSE_OVER, selectFurnitureProduct);
-			furnitureProductMesh.addEventListener(MouseEvent3D.MOUSE_OUT, deselectFurnitureProduct);
-			furnitureProductMesh.addEventListener(MouseEvent3D.MOUSE_DOWN, translateFurnitureProduct);
-			furnitureProductMesh.addEventListener(MouseEvent3D.MOUSE_UP, stopTranslateFurnitureProduct);
+			furnitureProductMesh.addEventListener(MouseEvent3D.CLICK, selectFurnitureProduct);
+			furnitureProductMesh.addEventListener(MouseEvent3D.DOUBLE_CLICK, deselectFurnitureProduct);
 			
 			furnitureProductController = new SimpleObjectController(eventSource, furnitureProductMesh, CAMERA_SPEED);
-			
+
 			container.addChild(furnitureProductMesh);
-			furnitureProductController.setDefaultBindings();
+			
+			// добавляем импортируемый предмет мебели под управление библиотеки jiglib
+				
 			furnitureProductController.disable();
 		}
 		
 		private function selectFurnitureProduct(event:MouseEvent3D):void{
 			furnitureProductMesh.filters = [new GlowFilter(0xFFFFFF, 0.5)];
+			translateFurnitureProduct();
 		}	
 		
 		private function deselectFurnitureProduct(event:MouseEvent3D):void{
 			furnitureProductMesh.filters = [];
+			stopTranslateFurnitureProduct();
 		}
 		
-		private function translateFurnitureProduct(event:MouseEvent3D):void{
+		private function translateFurnitureProduct():void{
 			furnitureProductController.enable();
 			cameraController.disable();
 		}
+
 		
-		private function stopTranslateFurnitureProduct(event:MouseEvent3D):void{
+		private function stopTranslateFurnitureProduct():void{
 			furnitureProductController.disable();
 			cameraController.enable();
 		}

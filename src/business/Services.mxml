@@ -35,6 +35,8 @@
 					 destination="rubyamf"
 					 showBusyCursor="true">
 		<mx:method name="create" />
+		<mx:method name="show" />
 		<mx:method name="index" />
+		<mx:method name="update" />
 	</mx:RemoteObject>
 </cairngorm:ServiceLocator>

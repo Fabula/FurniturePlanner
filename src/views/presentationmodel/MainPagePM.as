@@ -4,6 +4,7 @@ package views.presentationmodel
 	
 	import control.Pages;
 	
+	import messages.CloseCustomerBasketPopUpMessage;
 	import messages.DestroySessionMessage;
 	
 	import model.Project;
@@ -45,6 +46,11 @@ package views.presentationmodel
 		public function logout():void{
 			dispatcher(NavigationEvent.createNavigateToEvent(Pages.LOGIN_STATE));
 			sendMessage(new DestroySessionMessage());
+		}
+		
+		[MessageHandler]
+		public function closeCustomerBasketPopUp(message:CloseCustomerBasketPopUpMessage):void{
+			openCustomerBasket = false;
 		}
 	}
 }

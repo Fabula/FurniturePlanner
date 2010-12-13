@@ -28,7 +28,9 @@ package command
 		public function result(event:Object):void{
 			var resultEvent:ResultEvent = ResultEvent(event);
 			var furnitureProductsVO:Array = resultEvent.result as Array;
-
+			
+			mainAppModel.furnitureProducts = new Array();
+			
 			for each (var prVO:FurnitureProductVO in furnitureProductsVO){
 				mainAppModel.furnitureProducts.push(FurnitureProduct.fromVO(prVO));
 			}

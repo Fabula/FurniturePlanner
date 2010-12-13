@@ -5,6 +5,7 @@
 		 xmlns:adminPage="views.adminPage.*"
 		 xmlns:parsley="http://www.spicefactory.org/parsley"
 		 xmlns:cairngorm="http://ns.adobe.com/cairngorm"
+		 creationComplete="creationCompleteHandler(event)"
 		 title="Пользователи системы"
 		 width="100%" height="100%"
 		 minHeight="300">
@@ -34,9 +35,12 @@
 	<fx:Script>
 		<![CDATA[
 			import messages.RequiredUsersMessage;
+			import messages.ShowAllUsersMessage;
 			
 			import model.PlannerModelLocator;
 			import model.User;
+			
+			import mx.events.FlexEvent;
 			
 			[Bindable]
 			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
@@ -49,6 +53,16 @@
 			public function handleSearchMessage(message:RequiredUsersMessage):void{
 				usersListDatagrid.dataProvider = message.users;
 			}
+			
+			[MessageDispatcher]
+			public var dispatcher:Function;
+
+			private function creationCompleteHandler(event:FlexEvent):void
+			{
+				// после создания вида, вид запрашивает данные с бэкэнда
+				dispatcher(new ShowAllUsersMessage());
+			}
+
 		]]>
 	</fx:Script>
 	<s:controlBarContent>

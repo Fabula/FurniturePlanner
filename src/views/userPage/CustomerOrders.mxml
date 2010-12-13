@@ -14,6 +14,7 @@
 			import messages.GetCustomerOrdersMessage;
 			
 			import model.PlannerModelLocator;
+			import util.Util;
 			
 			import mx.events.FlexEvent;
 			
@@ -43,7 +44,9 @@
 					 dataProvider="{mainAppModel.orders}"
 					 width="100%">
 			<mx:columns>
-				<mx:DataGridColumn headerText="Дата создания заказа" dataField="orderCreatedDate"/>
+				<mx:DataGridColumn headerText="Дата создания заказа" 
+								   dataField="orderCreatedDate"
+								   labelFunction="util.Util.convertDate"/>
 				<mx:DataGridColumn headerText="Статус заказа" dataField="orderStatus"/>
 				<mx:DataGridColumn headerText="Действия">
 					<mx:itemRenderer>

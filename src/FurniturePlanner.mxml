@@ -17,9 +17,10 @@
 		<business:Services id="services"/>
 	</fx:Declarations>
 	<fx:Script>
-		import control.Pages;
-		/* import views.ContentPM; */
-
+		<![CDATA[
+			import control.Pages;
+			
+		]]>
 	</fx:Script>
 	<s:VGroup width="100%" height="100%">
 		<views:ContentNavigator />

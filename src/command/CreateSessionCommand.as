@@ -33,23 +33,13 @@ package command
 		public function result(event:Object):void{
 			var resultEvent:ResultEvent = ResultEvent(event);
 			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			
 			mainAppModel.currentUser = User.fromVO(UserVO(resultEvent.result));
 			
 			var userRole:String = mainAppModel.currentUser.systemRole;
 
-			// открыть для пользователя окно, которое соответствует его категории
+			// открыть для пользователя окно, которое соответствует его роли
 			dispatcher(new GetMainWindow(userRole));
-			
-			if (userRole == "user" || userRole == "designer"){
-				// загрузить каталог
-				dispatcher(new GetFurnitureProducts());
-			}
-			else{
-				if (userRole == "admin"){
-					// загрузить данные всех пользователей
-					dispatcher(new ShowAllUsersMessage());
-				}
-			}
 		}
 		
 		public function fault(event:Object):void{

@@ -14,5 +14,8 @@ package vo
 		public var password_confirmation:String;
 		public var created_at:Date;
 		public var updated_at:Date;
+		
+		[Transient]
+		public var orders:Array;
 	}
 }

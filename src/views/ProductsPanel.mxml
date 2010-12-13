@@ -4,6 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:parsley="http://www.spicefactory.org/parsley"
 		 xmlns:cairngorm="http://ns.adobe.com/cairngorm"
+		 creationComplete="creationCompleteHandler(event)"
 		 width="100%" height="100%"
 		 gap="20"
 		 verticalAlign="middle" xmlns:views="views.*">
@@ -29,11 +30,23 @@
 			
 			import messages.AddFurnitureProductToView;
 			import messages.CreateProductsPanelMessage;
+			import messages.GetFurnitureProducts;
 			
 			import model.FurnitureProduct;
 			import model.PlannerModelLocator;
 			
+			import mx.events.FlexEvent;
+			
 			import spark.core.SpriteVisualElement;
+			
+			[MessageDispatcher]
+			public var dispatcher:Function;
+			
+			private function creationCompleteHandler(event:FlexEvent):void
+			{
+				dispatcher(new GetFurnitureProducts());
+			}
+
 			
 			[Bindable]
 			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();

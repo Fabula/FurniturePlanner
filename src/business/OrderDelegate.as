@@ -2,6 +2,8 @@ package business
 {
 	import com.adobe.cairngorm.business.ServiceLocator;
 	
+	import messages.ChangeOrderStatusMessage;
+	
 	import model.Order;
 	
 	import mx.rpc.IResponder;
@@ -27,9 +29,18 @@ package business
 			call.addResponder(responder);
 		}
 		
-		public function loadOrders():void{
+		public function loadCustomerOrders():void{
+			var call:Object = _orderRO.show.send();
+			call.addResponder(responder);
+		}
+		
+		public function loadCustomersOrders():void{
 			var call:Object = _orderRO.index.send();
-			
+			call.addResponder(responder);
+		}
+		
+		public function changeOrdersStatus(message:ChangeOrderStatusMessage):void{
+			var call:Object = _orderRO.update.send(message.orderID, message.orderStatus);
 			call.addResponder(responder);
 		}
 	}

@@ -20,7 +20,7 @@ package command
 		
 		public function execute(message:GetCustomerOrdersMessage):void{
 			var delegate:OrderDelegate = new OrderDelegate(this);
-			delegate.loadOrders();
+			delegate.loadCustomerOrders();
 		}
 		
 		public function result(event:Object):void{

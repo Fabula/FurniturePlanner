@@ -51,15 +51,14 @@ package command
 				Alert.show(ErrorMessageCenter.errorAccountCreating, ErrorMessageCenter.errorMessageTitle);
 			}
 			else{
-				if (mainAppModel.currentUser.systemRole == "admin"){
-					// обновить список пользователей
+				if (mainAppModel.currentUser && mainAppModel.currentUser.systemRole == "admin"){
 					closeCreateUserPopUp(new CloseCreateUserPopUpMessage());
 					getAllUsers(new ShowAllUsersMessage());
 				}
 				else{
+					Alert.show(ErrorMessageCenter.successAccountCreating, ErrorMessageCenter.successMessage);
 					// устанавливаем текущего пользователя
 					mainAppModel.currentUser = User.fromVO(UserVO(resultEvent.result));
-					Alert.show(ErrorMessageCenter.successAccountCreating, ErrorMessageCenter.successMessage);
 					// открываем соответствующее окно
 					dispatcher(new GetMainWindow(mainAppModel.currentUser.systemRole));
 					// загружаем каталог

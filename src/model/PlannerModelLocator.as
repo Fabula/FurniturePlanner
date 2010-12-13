@@ -8,6 +8,8 @@ package model
 	
 	import model.User;
 	
+	import mx.collections.ArrayList;
+	
 	import vo.UserVO;
 	
 	[Bindable]
@@ -19,10 +21,16 @@ package model
 		public var openProductLoadFormPopUp:Boolean = false;
 		public var openFurnitureProductDescription:Boolean = false;
 		
-		public var furnitureProducts:Array = new Array();
+		public var furnitureProducts:Array;
 		public var customerBasket:Array = new Array();
 		public var users:Array;
+		
+		// orders of current user
 		public var orders:Array;
+		
+		public var customersWithOrders:Array;
+		public var customers:Array;
+		public var customersOrders:Array;
 		
 		public var currentProductFile:FileReference;
 		public var base64ProductFileString:String;
@@ -59,6 +67,8 @@ package model
 			{label: "менеджер", data: "manager"},
 			{label: "администратор", data: "admin"}
 		];
+		
+		public var orderStatusActions:Array = ["подтвержден", "выполняется", "доставлен", "отменен"];
 		
 		private static var plannerModelLocator:PlannerModelLocator;
 		
