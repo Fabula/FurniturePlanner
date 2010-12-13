@@ -24,7 +24,8 @@ package business
 		
 		public function createModel(furnitureProduct:FurnitureProduct):void{
 			var furnitureProductVO:FurnitureProductVO = furnitureProduct.toVO();
-			var call:Object = _furnitureModelRO.create.send(furnitureProductVO);
+			
+			var call:Object = _furnitureModelRO.create.send(furnitureProductVO, furnitureProductVO.model);
 			
 			call.addResponder(_responder);
 		}

@@ -21,12 +21,10 @@ package business
 	import flash.events.MouseEvent;
 	import flash.filters.GlowFilter;
 	import flash.media.Camera;
-	import flash.utils.ByteArray;
 	
 	import model.FurnitureProduct;
 	
 	import mx.controls.Alert;
-	import mx.utils.Base64Decoder;
 	
 	public class Preview extends Sprite
 	{
@@ -80,15 +78,8 @@ package business
 		}
 
 		private function importModel(product:FurnitureProduct):void{
-			
-			// декодируем base64 строку обратно в ByteArray
-			var decoder:Base64Decoder = new Base64Decoder();
-			var productModel:ByteArray;
-				
-			decoder.decode(product.model_data);
-			productModel= decoder.toByteArray();
 			var parser:Parser3DS = new Parser3DS();
-			parser.parse(productModel);
+			parser.parse(product.furnitureModel.furnitureModel);
 			modelMesh = parser.objects[0] as Mesh;
 			modelMesh.x -= 100;
 				

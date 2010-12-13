@@ -26,7 +26,7 @@
 			{
 				furnitureProductModelArea.addChild(new FurnitureProductView(product, furnitureProductModelArea));
 			}
-
+			
 		]]>
 	</fx:Script>
 	<s:controlBarContent>
@@ -55,6 +55,9 @@
 				<s:Label text="Описание: " 
 						 fontWeight="bold"/>
 				<s:Label text="{product.description}" />
+				<s:Label text="Размеры (высота x ширина x длина, м):"
+						 fontWeight="bold"/>
+				<s:Label text="{product.furnitureModel.height + ' x ' + product.furnitureModel.width + ' x ' + product.furnitureModel.height}" />
 			</s:VGroup>
 			<s:SpriteVisualElement id="furnitureProductModelArea" 
 									width="200" height="100%">	

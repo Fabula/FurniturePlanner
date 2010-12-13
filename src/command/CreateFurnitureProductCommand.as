@@ -38,9 +38,7 @@ package command
 			else{
 				Alert.show(ErrorMessageCenter.loadFurnitureProductSuccessMessage, ErrorMessageCenter.successMessage);
 				var newProduct:FurnitureProduct = FurnitureProduct.fromVO(FurnitureProductVO(resultEvent.result));
-				//mainAppModel.furnitureProducts.push(FurnitureProduct.fromVO(FurnitureProductVO(resultEvent.result)));
-				// обновим каталог
-				//dispatcher(new GetFurnitureProducts());
+
 				dispatcher(new AddFurnitureProductToView(newProduct));
 			}
 			

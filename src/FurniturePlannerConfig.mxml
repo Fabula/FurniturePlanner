@@ -40,8 +40,8 @@
 		<spicefactory:DynamicCommand type="{ShowAllUsersCommand}" />
 		<spicefactory:DynamicCommand type="{NavigateToMainWindow}" />
 		<spicefactory:DynamicCommand type="{CreateSessionCommand}" stateful="true" />
-		<spicefactory:DynamicCommand type="{CreateProjectCommand}" />
-		<spicefactory:DynamicCommand type="{BrowseFileCommand}" />
+		<spicefactory:DynamicCommand type="{CreateProjectCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{BrowseFileCommand}" stateful="true" />
 		<spicefactory:DynamicCommand type="{CreateFurnitureProductCommand}" stateful="true" />
 		<spicefactory:DynamicCommand type="{LoadFurnitureProducts}" stateful="true" />
 		<spicefactory:DynamicCommand type="{DestroySessionCommand}" />

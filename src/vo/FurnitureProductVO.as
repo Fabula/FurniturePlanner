@@ -10,7 +10,7 @@ package vo
 		public var style_name:String;
 		public var furniture_category_name:String;
 		public var price:Number;
-		public var model:String;
+		public var model:FurnitureModelVO;
 		public var description:String;
 	}
 }

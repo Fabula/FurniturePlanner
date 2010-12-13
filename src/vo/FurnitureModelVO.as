@@ -4,10 +4,16 @@ package vo
 	[Bindable]
 	public class FurnitureModelVO
 	{
-		public var manufacturerName:String;
-		public var manufacturerCountry:String;
-		public var furnitureStyle:String;
-		public var price:String;
-		public var modelData:String;
+		[Transient]
+		public var furniture_product_id:int;
+		
+		[Transient]
+		public var id:int;
+		
+		public var model:String;
+		//public var texture:ByteArray;
+		public var height:Number;
+		public var width:Number;
+		public var length:Number;
 	}
 }
