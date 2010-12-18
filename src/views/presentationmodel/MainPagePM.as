@@ -31,11 +31,18 @@ package views.presentationmodel
 		[Bindable]
 		public var logoutIcon:Class;
 		
+		[Embed(source="icons/images.png")]
+		[Bindable]
+		public var customerProjectsIcon:Class;
+		
 		[Bindable]
 		public var openCustomerBasket:Boolean = false;
 		
 		[Bindable]
 		public var openCustomerOrders:Boolean = false;
+		
+		[Bindable]
+		public var openCustomerProjects:Boolean = false;
 				
 		[MessageDispatcher]
 		public var dispatcher:Function;

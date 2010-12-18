@@ -37,5 +37,9 @@ package errorMessages
 		public static var changeOrderStatusErrorMessage:String = "При изменении статуса заказа произошла ошибка. Попробуйте повторить данную процедуру позже";
 		
 		public static var successOrderCreated:String = "Заказ успешно оформлен";
+		
+		public static var successProjectCreated:String = "Проект успешно сохранен";
+		public static var successProjectDeleted:String = "Проект успешно удален";
+		public static var projectSaveError:String = "Ошибка при сохранении проекта";
 	}
 }

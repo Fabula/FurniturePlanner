@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXDataGridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						  xmlns:s="library://ns.adobe.com/flex/spark" 
+						  xmlns:mx="library://ns.adobe.com/flex/mx" 
+						  focusEnabled="true">
+	<fx:Script>
+		<![CDATA[
+			
+			[Embed(source="icons/lock.png")] 
+			public var projectPrivateIcon:Class; 
+			
+			[Embed(source="icons/lock_open.png")] 
+			public var projectPublicIcon:Class; 
+			
+			private function getAppropriateImage(data:Object):Object{
+				var projectStatus:Boolean = Boolean(data);
+				
+				if (projectStatus){
+					return projectPrivateIcon;
+				}
+				else{
+					return projectPublicIcon;
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:Image x="10" y="3" id="designerHelpImage" source="{getAppropriateImage(data)}" />
+</s:MXDataGridItemRenderer>

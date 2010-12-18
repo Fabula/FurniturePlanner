@@ -56,9 +56,9 @@ package views.adminPage
 				}
 			}
 			else{
-				for each (var user:User in mainAppModel.users){
-					if ((user.lastName.toLocaleLowerCase().search(surName) > -1) && (user.systemRole == role)){
-						requiredUsers.push(user);
+				for each (var u:User in mainAppModel.users){
+					if ((u.lastName.toLocaleLowerCase().search(surName) > -1) && (u.systemRole == role)){
+						requiredUsers.push(u);
 					}
 				}
 			}

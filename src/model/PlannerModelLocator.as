@@ -16,6 +16,7 @@ package model
 	public class PlannerModelLocator implements IModelLocator
 	{
 		public var currentUser:User;
+		// проект открытый в данный момент
 		public var currentProject:Project;
 		public var openNewProjectPopUp:Boolean = false;
 		public var openProductLoadFormPopUp:Boolean = false;

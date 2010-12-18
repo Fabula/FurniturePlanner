@@ -1,5 +1,7 @@
 package business.room
 {
+	import alternativa.engine3d.objects.Mesh;
+	
 	import model.BasketItem;
 	import model.FurnitureProduct;
 	import model.PlannerModelLocator;
@@ -9,8 +11,9 @@ package business.room
 		private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
 		private var basketItem:BasketItem;
 		
-		public function placeFurnitureProductToBasket(product:FurnitureProduct):void{
+		public function placeFurnitureProductToBasket(product:FurnitureProduct, modelMesh:Mesh):void{
 			basketItem = BasketItem.toBasketItem(product);
+			basketItem.mesh = modelMesh;
 			
 			var matched:Boolean = false;
 			

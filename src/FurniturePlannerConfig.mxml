@@ -28,6 +28,7 @@
 		
 		<userPage:CreateProjectPanelPM />
 		<userPage:CustomerOrderItemsPM />
+		<userPage:CustomerProjectsPM />
 		<business:MainWindowDelegate />
 		<business:RoomDelegate />
 		<command:CreateUserCommand />
@@ -40,7 +41,6 @@
 		<spicefactory:DynamicCommand type="{ShowAllUsersCommand}" />
 		<spicefactory:DynamicCommand type="{NavigateToMainWindow}" />
 		<spicefactory:DynamicCommand type="{CreateSessionCommand}" stateful="true" />
-		<spicefactory:DynamicCommand type="{CreateProjectCommand}" stateful="true" />
 		<spicefactory:DynamicCommand type="{BrowseFileCommand}" stateful="true" />
 		<spicefactory:DynamicCommand type="{CreateFurnitureProductCommand}" stateful="true" />
 		<spicefactory:DynamicCommand type="{LoadFurnitureProducts}" stateful="true" />
@@ -49,6 +49,10 @@
 		<spicefactory:DynamicCommand type="{LoadCustomerOrdersCommand}" />
 		<spicefactory:DynamicCommand type="{LoadCustomersOrdersCommand}" />
 		<spicefactory:DynamicCommand type="{ChangeOrderStatusCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{CreateProjectCommand}" />
+		<spicefactory:DynamicCommand type="{LoadCustomerProjectsCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{DeleteCustomerProjectCommand}" stateful="true" />
+		<spicefactory:DynamicCommand type="{UpdateCustomerProjectCommand}" />
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
@@ -63,6 +67,7 @@
 			import views.designerPage.CreateFurnitureProductPM;
 			import views.userPage.CreateProjectPanelPM;
 			import views.userPage.CustomerOrderItemsPM;
+			import views.userPage.CustomerProjectsPM;
 			import views.presentationmodel.FurnitureProductDescriptionPM;
 			import views.adminPage.ChangeUserAccountPanelPM;
 			import views.adminPage.AllUsersPanelPM;

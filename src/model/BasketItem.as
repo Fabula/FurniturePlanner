@@ -1,5 +1,7 @@
 package model
 {
+	import alternativa.engine3d.objects.Mesh;
+
 	public class BasketItem extends FurnitureProduct
 	{
 		[Bindable]
@@ -7,6 +9,8 @@ package model
 		
 		[Bindable]
 		public var quantity:int = 1;
+		
+		public var mesh:Mesh;
 		
 		public function BasketItem(manufacturerName:String, manufacturerCountry:String, furnitureStyle:String, furnitureCategory:String, price:Number, model:FurnitureModel, description:String, id:int, buy:Boolean = false, quantity:int = 1)
 		{

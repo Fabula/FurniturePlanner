@@ -21,6 +21,7 @@ package business.room {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.GlowFilter;
+	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import jiglib.physics.RigidBody;
@@ -28,6 +29,9 @@ package business.room {
 	import model.BasketItem;
 	import model.FurnitureProduct;
 	import model.PlannerModelLocator;
+	import model.ProductPosition;
+	
+	import mx.controls.Alert;
 	
 
 	public class Room3D extends Sprite {
@@ -45,9 +49,9 @@ package business.room {
 		private var eventSource:InteractiveObject;
 		
 		// параметры помещения
-		private var roomWidth:Number;
-		private var roomHeight:Number;
-		private var roomLength:Number;
+		public var roomWidth:Number;
+		public var roomHeight:Number;
+		public var roomLength:Number;
 		
 		// размеры родительского окна
 		private var parentWidth:Number;
@@ -65,7 +69,10 @@ package business.room {
 		private const CAMERA_SPEED:Number = 2;
 		private const CAMERA_DISTANCE:Number = 8;
 		
-		public function Room3D(_roomWidth:Number, _roomHeight:Number, _roomLength:Number,
+		// сохраняем координаты предметов мебели
+		public var productsPositions:Array;
+	
+		public function Room3D(_roomWidth:Number, _roomLength:Number, _roomHeight:Number,
 							   parentWidth:Number,parentHeight:Number, _eventSource:InteractiveObject) 
 		{
 			
@@ -78,6 +85,8 @@ package business.room {
 			eventSource = _eventSource;
 			this.parentWidth = parentWidth - 2;
 			this.parentHeight = parentHeight - 75;
+			
+			productsPositions = new Array();
 			
 			basketController = new BasketController();
 		}
@@ -101,6 +110,11 @@ package business.room {
 		
 		private function setDefaultCameraSettings():void{
 			cameraController = new SimpleObjectController(eventSource, camera, CAMERA_SPEED);
+			
+			// ставим камеру, не точно в угол комнаты, а немного подальше от него.
+			var m:Number = 0.01;
+			
+			cameraController.setObjectPos(new Vector3D(roomWidth/2 - m ,roomLength/2 - m,roomHeight/2 - m));
 			cameraController.lookAtXYZ(room.x, room.y, room.z);
 		}
 		
@@ -117,12 +131,6 @@ package business.room {
 		public function removeListener():void{
 			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
-
-		private function onResizeEvent(event:Event):void{
-			camera.view.width = stage.width;
-			camera.view.height = stage.height;
-		}
-		
 		
 		private function initBox():void{
 			
@@ -146,33 +154,50 @@ package business.room {
 			var cellingTexture:TextureMaterial = new TextureMaterial(cellingBitmap);
 						
 			// Создание комнаты (прямоугольного параллепипеда)
-			room = new Box(roomWidth, roomHeight, roomLength, 1,1,1, true, false, 
+			room = new Box(roomWidth, roomLength, roomHeight, 1,1,1, true, false, 
 				wallTexture, wallTexture, wallTexture, wallTexture, floorTexture, cellingTexture);
 
 			physics.createRigidRoom(room, roomWidth, roomLength, roomHeight);
 		}
 
-		public function addFurnitureProductToRoom(product:FurnitureProduct):void{
+		public function addFurnitureProductToRoom(product:FurnitureProduct, matrix:Matrix3D = null):void{
 			furnitureProductMesh = product.modelMesh.clone() as Mesh;
-		
-			basketController.placeFurnitureProductToBasket(product);
+			basketController.placeFurnitureProductToBasket(product, furnitureProductMesh);
+						
+			// если указана матрица трансформации
+			if (matrix){
+				furnitureProductMesh.matrix = matrix.clone();
+				/*/*furnitureProductMesh.x = matrix.position.x;
+				furnitureProductMesh.y = matrix.position.y;
+				furnitureProductMesh.z = matrix.position.z;*/
+			}
+			else{
+				furnitureProductMesh.matrix.position = new Vector3D(0,0,-roomHeight/2,0);
+			}
 			
-			// установка в угол комнаты
-			furnitureProductMesh.x = roomWidth;
-			furnitureProductMesh.y = 0;
-			furnitureProductMesh.z = -roomHeight;
 			furnitureProductMesh.scaleX = furnitureProductMesh.scaleY = furnitureProductMesh.scaleZ = 0.03;
 			
 			furnitureProductMesh.addEventListener(MouseEvent3D.CLICK, selectFurnitureProduct);
 			furnitureProductMesh.addEventListener(MouseEvent3D.DOUBLE_CLICK, deselectFurnitureProduct);
 			
-			furnitureProductController = new SimpleObjectController(eventSource, furnitureProductMesh, CAMERA_SPEED);
-
 			container.addChild(furnitureProductMesh);
 			
-			// добавляем импортируемый предмет мебели под управление библиотеки jiglib
-				
-			furnitureProductController.disable();
+			var productPosition:ProductPosition = new ProductPosition(furnitureProductMesh.matrix, product.furnitureProductID);
+			productsPositions.push(productPosition);
+			
+		}
+		
+		public function importModelToRoom(productID:int, matrix:Matrix3D):void{
+			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			var pr:FurnitureProduct;
+			
+			for each(var product:FurnitureProduct in mainAppModel.furnitureProducts){
+				if (productID == product.furnitureProductID){
+					pr = product;
+				}
+			}
+
+			addFurnitureProductToRoom(pr, matrix);
 		}
 		
 		private function selectFurnitureProduct(event:MouseEvent3D):void{
@@ -182,18 +207,45 @@ package business.room {
 		
 		private function deselectFurnitureProduct(event:MouseEvent3D):void{
 			furnitureProductMesh.filters = [];
-			stopTranslateFurnitureProduct();
+			furnitureProductMesh.y += 2;			
 		}
 		
 		private function translateFurnitureProduct():void{
-			furnitureProductController.enable();
-			cameraController.disable();
+			furnitureProductMesh.x += 2;
+			
+			var productID:int = searchProduct(furnitureProductMesh);
+			var matrix:Matrix3D = furnitureProductMesh.matrix.clone();
+			updateProductMatrix(productID, matrix);
 		}
-
+		
+		private function updateProductMatrix(productID:int, matrix:Matrix3D):void{
+			var prPos:ProductPosition;
+			
+			for each (var prodPos:ProductPosition in productsPositions){
+				if (prodPos.productID == productID){
+					prPos = prodPos;
+				}
+			}
+			
+			prPos.matrix = matrix.clone();
+		}
+		
+		private function searchProduct(furnitureProductMesh:Mesh):int{
+			var productID:int;
+			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
+			
+			for each (var item:BasketItem in mainAppModel.customerBasket){
+				if (item.mesh == furnitureProductMesh){
+					productID = item.furnitureProductID;
+				}
+			}
+						
+			return productID;
+		}
 		
 		private function stopTranslateFurnitureProduct():void{
-			furnitureProductController.disable();
-			cameraController.enable();
+			//furnitureProductController.disable();
+			//cameraController.enable();
 		}
 		
 		public function changeView(mode:int):void{
@@ -206,10 +258,16 @@ package business.room {
 		}
 		
 		private function setCameraTo2D():void{
-			camera.z = 25;
+			cameraController.disable();
+			camera.x = camera.y = 0;
+			
+			//camera.z = 25;
+			var cameraHeight:Number = (roomWidth / (2 * Math.tan(camera.fov / 2)));
+			
+			camera.z = cameraHeight*4;
+
 			camera.rotationX = -180 * Math.PI/180;
 			camera.rotationY = camera.rotationZ = 0;
-			cameraController.disable();
 		}
 	}
 }

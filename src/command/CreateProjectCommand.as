@@ -24,22 +24,14 @@ package command
 	public class CreateProjectCommand implements IResponder
 	{
 		private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
-		private var message:NewProject;
-		
-		[Bindable]
-		[Inject]
-		public var roomDelegate:RoomDelegate;
 
-		public function execute(_message:NewProject):void{
+		public function execute(project:Project):void{
 			var delegate:ProjectDelegate = new ProjectDelegate(this);
-			message = _message;
-			var userID:int = mainAppModel.currentUser.id;
-			
-			var project:Project = new Project(message.projectName, userID);
-			delegate.createProject(project);
+			delegate.saveProject(project);
 		}
 		
 		public function result(event:Object):void{
+			
 			var resultEvent:ResultEvent = ResultEvent(event);
 			if (resultEvent.result == "error"){
 				Alert.show(ErrorMessageCenter.projectCreateError, ErrorMessageCenter.errorMessageTitle);
@@ -49,12 +41,12 @@ package command
 				mainAppModel.currentProject = Project.fromProjectVO((ProjectVO(resultEvent.result)));
 				mainAppModel.openNewProjectPopUp = false;
 				
-				roomDelegate.createRoom(message.roomWidth, message.roomHeight, message.roomLength);
+				Alert.show(ErrorMessageCenter.successProjectCreated, ErrorMessageCenter.successMessage);
 			}
 		}
 		
 		public function fault(event:Object):void{
-			
+			Alert.show(ErrorMessageCenter.networkError, ErrorMessageCenter.errorMessageTitle);
 		}
 	}
 }

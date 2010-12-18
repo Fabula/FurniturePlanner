@@ -29,6 +29,9 @@
 					 destination="rubyamf"
 					 showBusyCursor="true">
 		<mx:method name="create" />
+		<mx:method name="index" />
+		<mx:method name="destroy" />
+		<mx:method name="update" />
 	</mx:RemoteObject>
 	<mx:RemoteObject id="orderRO"
 					 source="OrderController"

@@ -15,8 +15,6 @@ package views.userPage
 		
 		public function createProject(projectName:String, roomWidth:int, roomHeight:int, roomLength:int):void{
 			dispatcher(new NewProject(projectName, roomWidth, roomHeight, roomLength));
-			
-			
 		}
 	}
 }

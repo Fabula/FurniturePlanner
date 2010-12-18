@@ -33,7 +33,7 @@ package command
 		}
 		
 		public function fault(event:Object):void{
-			
+			Alert.show(ErrorMessageCenter.networkError, ErrorMessageCenter.errorMessageTitle);
 		}
 	}
 }
