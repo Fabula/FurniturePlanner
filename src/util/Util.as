@@ -5,7 +5,7 @@ package util
 	public class Util
 	{
 		public static function convertDate(item:Object, column:DataGridColumn):String{
-			return item.created_at.date + "/" + item.created_at.month + "/" + item.created_at.fullYear + " " + item.created_at.hours + ":" + item.created_at.minutes;
+			return item.orderCreatedDate.date + "/" + (item.orderCreatedDate.month + 1) + "/" + item.orderCreatedDate.fullYear + " " + item.orderCreatedDate.hours + ":" + item.orderCreatedDate.minutes;
 		}
 	}
 }

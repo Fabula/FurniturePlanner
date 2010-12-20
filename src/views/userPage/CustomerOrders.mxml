@@ -14,9 +14,10 @@
 			import messages.GetCustomerOrdersMessage;
 			
 			import model.PlannerModelLocator;
-			import util.Util;
 			
 			import mx.events.FlexEvent;
+			
+			import util.Util;
 			
 			[Bindable]
 			private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
@@ -41,31 +42,29 @@
 	<s:VGroup width="100%" height="100%"
 			  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10">
 		<mx:DataGrid id="ordersDatagrid"
-					 dataProvider="{mainAppModel.orders}"
+					 dataProvider="{mainAppModel.customerOrders}"
 					 width="100%">
 			<mx:columns>
-				<mx:DataGridColumn headerText="Дата создания заказа" 
+				<mx:DataGridColumn headerText="Дата создания заказа (день/месяц/год)" 
 								   dataField="orderCreatedDate"
 								   labelFunction="util.Util.convertDate"/>
 				<mx:DataGridColumn headerText="Статус заказа" dataField="orderStatus"/>
-				<mx:DataGridColumn headerText="Действия">
-					<mx:itemRenderer>
-						<fx:Component>
-							<mx:Button label="Отменить заказ" />
-						</fx:Component>
-					</mx:itemRenderer>
-				</mx:DataGridColumn>
 			</mx:columns>
 		</mx:DataGrid>
 		<mx:DataGrid id="orderDetailDatagrid"
-					 width="100%"
-					 dataProvider="{ordersDatagrid.selectedItem.orderItems}">
+					 width="100%" height="150"
+					 dataProvider="{ordersDatagrid.selectedItem.orderItems}"
+					 verticalAlign="middle">
 			<mx:columns>
-				<mx:DataGridColumn headerText="Описание предмета мебели" dataField="furnitureProduct.description" />
+				<mx:DataGridColumn headerText="Описание предмета мебели" 
+								   dataField="furnitureProduct.description"
+								   itemRenderer="views.userPage.ProductDescriptionItemRendererForCustomerOrdersDataGrid"/>
 				<mx:DataGridColumn headerText="Производитель" dataField="furnitureProduct.manufacturerName" />
 				<mx:DataGridColumn headerText="Количество"  dataField="quantity"/>
-				<mx:DataGridColumn headerText="Цена" dataField="furnitureProduct.price"/>
+				<mx:DataGridColumn headerText="Цена (евро)" dataField="furnitureProduct.price"/>
 			</mx:columns>
 		</mx:DataGrid>
+		<s:Button label="Отменить заказ"
+				  enabled="{ordersDatagrid.selectedItem}" />
 	</s:VGroup>
 </s:Panel>

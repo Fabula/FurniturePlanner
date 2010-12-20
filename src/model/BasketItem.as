@@ -11,6 +11,7 @@ package model
 		public var quantity:int = 1;
 		
 		public var mesh:Mesh;
+		public var isSelect:Boolean;
 		
 		public function BasketItem(manufacturerName:String, manufacturerCountry:String, furnitureStyle:String, furnitureCategory:String, price:Number, model:FurnitureModel, description:String, id:int, buy:Boolean = false, quantity:int = 1)
 		{

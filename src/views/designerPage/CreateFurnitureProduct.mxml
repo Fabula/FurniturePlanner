@@ -74,7 +74,7 @@
 							   click="pm.get3DModel()"/>
 				</s:VGroup>
 			</s:HGroup>
-			<s:Label text="Укажите размеры модели (м):" />
+			<s:Label text="Укажите размеры модели (мм):" />
 			<mx:Form>
 				<mx:FormItem label="Высота:">
 					<s:TextInput id="heightInput"/>

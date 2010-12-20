@@ -39,6 +39,9 @@ package business
 			furnitureProductMeshCopy = product.modelMesh.clone() as Mesh;
 			furnitureProductMeshCopy.x = furnitureProductMeshCopy.y = furnitureProductMeshCopy.z = 0;
 			container.addChild(furnitureProductMeshCopy);
+			
+			camera.z = ((furnitureProductMeshCopy.boundMaxX - furnitureProductMeshCopy.boundMinX) / (2 * Math.tan(camera.fov / 2))) * 4;
+			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
@@ -52,10 +55,8 @@ package business
 		}
 		
 		private function setCameraPosition():void{
-			camera.rotationX = -90 * Math.PI/180; // значение поворота измеряется в радианах
-			camera.y = -170;
-			camera.x = 0;
-			camera.z = 80;
+			camera.x = camera.y = 0;
+			camera.rotationX = - Math.PI;
 		}
 		
 		private function onEnterFrame(event:Event):void{

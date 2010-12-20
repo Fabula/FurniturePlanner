@@ -18,6 +18,7 @@ package model
 		public var currentUser:User;
 		// проект открытый в данный момент
 		public var currentProject:Project;
+		
 		public var openNewProjectPopUp:Boolean = false;
 		public var openProductLoadFormPopUp:Boolean = false;
 		public var openFurnitureProductDescription:Boolean = false;
@@ -28,6 +29,7 @@ package model
 		
 		// orders of current user
 		public var orders:Array;
+		public var customerOrders:Array;
 		
 		public var customersWithOrders:Array;
 		public var customers:Array;

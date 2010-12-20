@@ -25,7 +25,21 @@ package business.room
 			}
 			if (!matched){
 				mainAppModel.customerBasket.push(basketItem);	
+				
 			}
+		}
+		
+		public function removeFurnitureProductFromBasket(modelMesh:Mesh):void{
+			
+			var index:int = -1;
+			
+			for each (var item:BasketItem in mainAppModel.customerBasket){
+				index++;
+				if (item.modelMesh == modelMesh){
+					mainAppModel.customerBasket.slice(index, 1);
+				}
+			}
+			
 		}
 	}
 }

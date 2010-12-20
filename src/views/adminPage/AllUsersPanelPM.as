@@ -7,6 +7,8 @@ package views.adminPage
 	
 	import model.PlannerModelLocator;
 	import model.User;
+	
+	import mx.controls.dataGridClasses.DataGridColumn;
 
 	[Bindable]
 	public class AllUsersPanelPM
@@ -64,6 +66,28 @@ package views.adminPage
 			}
 				
 			dispatcher(new RequiredUsersMessage(requiredUsers));		
+		}
+		
+		public function retrieveUserCategory(item:Object, column:DataGridColumn):String{
+			
+			var role:String;
+			
+			switch (item.systemRole){
+				case "user":
+					role = "клиент";
+					break;
+				case "admin":
+					role = "администратор";
+					break;
+				case "designer":
+					role = "дизайнер";
+					break;
+				case "manager":
+					role = "менеджер";
+					break;
+			}
+			
+			return role;
 		}
 	}
 }

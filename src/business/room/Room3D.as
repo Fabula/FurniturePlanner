@@ -7,6 +7,7 @@ package business.room {
 	import alternativa.engine3d.core.MouseEvent3D;
 	import alternativa.engine3d.core.Object3D;
 	import alternativa.engine3d.core.Object3DContainer;
+	import alternativa.engine3d.core.RayIntersectionData;
 	import alternativa.engine3d.core.View;
 	import alternativa.engine3d.materials.FillMaterial;
 	import alternativa.engine3d.materials.Material;
@@ -20,9 +21,12 @@ package business.room {
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.filters.GlowFilter;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import flash.utils.Dictionary;
 	
 	import jiglib.physics.RigidBody;
 	
@@ -34,8 +38,9 @@ package business.room {
 	import mx.controls.Alert;
 	
 
-	public class Room3D extends Sprite {
+	public class Room3D extends Sprite{
 		
+		private var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
 		private var container:Object3DContainer = new Object3DContainer();
 		private var bspContainer:BSPContainer;
 		
@@ -57,10 +62,6 @@ package business.room {
 		private var parentWidth:Number;
 		private var parentHeight:Number;
 		
-		// импортированная модель
-		private var furnitureProductMesh:Mesh;
-		private var furnitureProductController:SimpleObjectController;
-		
 		// твердые тела
 		private var rigidProduct:RigidBody;
 		private var rgBox:RigidBody;
@@ -68,6 +69,10 @@ package business.room {
 		
 		private const CAMERA_SPEED:Number = 2;
 		private const CAMERA_DISTANCE:Number = 8;
+		
+		private var mousePosition:Vector3D;
+		private var currentSelectedProduct:Mesh;
+		private var moveProduct:Boolean = false;
 		
 		// сохраняем координаты предметов мебели
 		public var productsPositions:Array;
@@ -106,6 +111,8 @@ package business.room {
 			setDefaultCameraSettings();
 
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			container.addEventListener(MouseEvent3D.CLICK, onClickEvent);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		}
 		
 		private function setDefaultCameraSettings():void{
@@ -122,10 +129,6 @@ package business.room {
 			physics.engine.integrate(0.2);
 			cameraController.update();
 			camera.render();
-			
-			if (furnitureProductController){
-				furnitureProductController.update();	
-			}
 		}
 		
 		public function removeListener():void{
@@ -161,30 +164,56 @@ package business.room {
 		}
 
 		public function addFurnitureProductToRoom(product:FurnitureProduct, matrix:Matrix3D = null):void{
-			furnitureProductMesh = product.modelMesh.clone() as Mesh;
+			var furnitureProductMesh:Mesh = product.modelMesh.clone() as Mesh;
 			basketController.placeFurnitureProductToBasket(product, furnitureProductMesh);
 						
 			// если указана матрица трансформации
 			if (matrix){
 				furnitureProductMesh.matrix = matrix.clone();
-				/*/*furnitureProductMesh.x = matrix.position.x;
-				furnitureProductMesh.y = matrix.position.y;
-				furnitureProductMesh.z = matrix.position.z;*/
 			}
 			else{
-				furnitureProductMesh.matrix.position = new Vector3D(0,0,-roomHeight/2,0);
+				furnitureProductMesh.x = furnitureProductMesh.y = 0;
+				furnitureProductMesh.z = -roomHeight/2;
 			}
 			
-			furnitureProductMesh.scaleX = furnitureProductMesh.scaleY = furnitureProductMesh.scaleZ = 0.03;
+			furnitureProductMesh.scaleX = furnitureProductMesh.scaleY = furnitureProductMesh.scaleZ = 0.0015;
 			
 			furnitureProductMesh.addEventListener(MouseEvent3D.CLICK, selectFurnitureProduct);
-			furnitureProductMesh.addEventListener(MouseEvent3D.DOUBLE_CLICK, deselectFurnitureProduct);
 			
 			container.addChild(furnitureProductMesh);
-			
+
 			var productPosition:ProductPosition = new ProductPosition(furnitureProductMesh.matrix, product.furnitureProductID);
 			productsPositions.push(productPosition);
 			
+		}
+		
+		private function quantityOfIdenticProduct(product:FurnitureProduct):int{
+			var count:int = 0;
+			
+			for each (var item:BasketItem in mainAppModel.customerBasket){
+				if (item.furnitureProductID == product.furnitureProductID){
+					count++;
+				}
+			}
+			
+			return count;
+			
+		}
+		
+		private function onKeyDown(event:KeyboardEvent):void{
+			if (currentSelectedProduct){
+				// удаляем из контейнера
+				container.removeChild(currentSelectedProduct);
+				// удаляем из корзины
+				basketController.removeFurnitureProductFromBasket(currentSelectedProduct);
+				// удаляем из productsPositions
+				
+				var index:int = -1;
+				for each (var prodPos:ProductPosition in productsPositions){
+					// по мешу ищем productID;
+					// удаляем
+				}
+			}
 		}
 		
 		public function importModelToRoom(productID:int, matrix:Matrix3D):void{
@@ -201,22 +230,46 @@ package business.room {
 		}
 		
 		private function selectFurnitureProduct(event:MouseEvent3D):void{
-			furnitureProductMesh.filters = [new GlowFilter(0xFFFFFF, 0.5)];
-			translateFurnitureProduct();
+			var furnitureProduct:Mesh = event.target as Mesh;
+			moveProduct = !moveProduct;
+			
+			if (moveProduct){
+				furnitureProduct.filters = [new GlowFilter(0xFFFFFF, 0.5)];
+				currentSelectedProduct = furnitureProduct;
+			}
+			else{
+				furnitureProduct.filters = [];
+				currentSelectedProduct = null;
+			}
+			
 		}	
 		
-		private function deselectFurnitureProduct(event:MouseEvent3D):void{
-			furnitureProductMesh.filters = [];
-			furnitureProductMesh.y += 2;			
-		}
-		
-		private function translateFurnitureProduct():void{
-			furnitureProductMesh.x += 2;
+		private function onClickEvent(event:MouseEvent3D):void{
+			mousePosition = getMouseVector3d(event, container);
 			
-			var productID:int = searchProduct(furnitureProductMesh);
-			var matrix:Matrix3D = furnitureProductMesh.matrix.clone();
-			updateProductMatrix(productID, matrix);
+			// если предмет выбран
+			if (currentSelectedProduct){
+				currentSelectedProduct.x = mousePosition.x;
+				currentSelectedProduct.y = mousePosition.y;
+				
+				var productID:int = searchProduct(currentSelectedProduct);
+				
+				// используя productID
+				var matrix:Matrix3D = currentSelectedProduct.matrix.clone();
+				updateProductMatrix(productID, matrix);
+			}
 		}
+
+		public function getMouseVector3d(mouseEvent:MouseEvent3D, container:Object3DContainer,excludeObjecsFromTouch:Dictionary = null):Vector3D
+		{
+			var data:RayIntersectionData = container.intersectRay(mouseEvent.localOrigin, mouseEvent.localDirection, excludeObjecsFromTouch);
+			if (data != null)
+			{
+				return data.object.matrix.transformVector(data.point);
+			}
+			return null;
+		}
+
 		
 		private function updateProductMatrix(productID:int, matrix:Matrix3D):void{
 			var prPos:ProductPosition;
@@ -232,7 +285,6 @@ package business.room {
 		
 		private function searchProduct(furnitureProductMesh:Mesh):int{
 			var productID:int;
-			var mainAppModel:PlannerModelLocator = PlannerModelLocator.getInstance();
 			
 			for each (var item:BasketItem in mainAppModel.customerBasket){
 				if (item.mesh == furnitureProductMesh){
@@ -241,11 +293,6 @@ package business.room {
 			}
 						
 			return productID;
-		}
-		
-		private function stopTranslateFurnitureProduct():void{
-			//furnitureProductController.disable();
-			//cameraController.enable();
 		}
 		
 		public function changeView(mode:int):void{

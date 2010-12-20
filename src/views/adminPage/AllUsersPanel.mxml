@@ -112,6 +112,9 @@
 				<mx:DataGridColumn headerText="Фамилия" dataField="lastName"/>
 				<mx:DataGridColumn headerText="Номер телефона" dataField="telephoneNumber"/>
 				<mx:DataGridColumn headerText="Адрес электронной почты" dataField="email" />
+				<mx:DataGridColumn headerText="Категория пользователя" 
+								   dataField="systemRole"
+								   labelFunction="{pm.retrieveUserCategory}"/>
 			</mx:columns>
 		</mx:DataGrid>
 	</s:VGroup>

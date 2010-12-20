@@ -5,7 +5,7 @@
 		 xmlns:parsley="http://www.spicefactory.org/parsley"
 		 xmlns:cairngorm="http://ns.adobe.com/cairngorm"
 		 xmlns:designerPage="views.designerPage.*"
-		 title="{mainAppModel.currentProject.projectName}">
+		 title="{mainAppModel.currentProject.projectName}" xmlns:views="views.*">
 	<fx:Declarations>
 		<parsley:Configure />
 		<cairngorm:PopUpWrapper id="loadModelPopUp"
@@ -47,11 +47,14 @@
 			
 			[MessageHandler]
 			public function addRoom(message:NewProject):void{
+				if (mainAppModel.room){
+					drawArea.removeChildAt(0);
+				}
+				
 				mainAppModel.currentProject = new Project(message.projectName, mainAppModel.currentUser.id);
 				mainAppModel.room = new Room3D(message.roomWidth, message.roomLength, message.roomHeight,
 											 this.width, this.height, drawArea);
 				drawArea.addChild(mainAppModel.room);
-				
 				mainAppModel.openNewProjectPopUp = false;
 			}
 			
@@ -67,11 +70,14 @@
 			
 			[MessageHandler]
 			public function importProject(message:ImportProjectMessage):void{
+				if (mainAppModel.room){
+					drawArea.removeChildAt(0);
+				}
 				
 				// теперь создадим комнату заданных размеров и разместим в ней предметы мебели с заданными координатами
 				mainAppModel.room = new Room3D(message.roomSize.width, message.roomSize.length, message.roomSize.height, width, height, drawArea);
 				drawArea.addChild(mainAppModel.room);
-								
+				
 				for each(var obj:Object in message.productsPositions){
 					var matrix:Matrix3D = new Matrix3D(obj.matrix.rawData);
 					matrix.position = new Vector3D(obj.matrix.position.x, obj.matrix.position.y, obj.matrix.position.z, obj.matrix.position.w);

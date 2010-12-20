@@ -54,8 +54,9 @@
 				<s:Label text="{product.furnitureStyle}" />
 				<s:Label text="Описание: " 
 						 fontWeight="bold"/>
-				<s:Label text="{product.description}" />
-				<s:Label text="Размеры (высота x ширина x длина, м):"
+				<s:Label text="{product.description}"
+						 width="100%" height="100%"/>
+				<s:Label text="Размеры (высота x ширина x длина, мм):"
 						 fontWeight="bold"/>
 				<s:Label text="{product.furnitureModel.height + ' x ' + product.furnitureModel.width + ' x ' + product.furnitureModel.height}" />
 			</s:VGroup>
@@ -66,7 +67,7 @@
 		<mx:HRule width="100%"/>
 		<s:HGroup width="100%"
 				  horizontalAlign="right">
-			<s:Label text="Цена: " />
+			<s:Label text="Цена (евро): " />
 			<s:Label text="{product.price}" />
 		</s:HGroup>
 	</s:VGroup>
